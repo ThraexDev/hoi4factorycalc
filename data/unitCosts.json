@@ -1,0 +1,296 @@
+{
+  "Infantry":[
+    {
+      "amount":100,
+      "name":"Infantry Equipment"
+    }
+  ],
+  "Mountaineer":[
+    {
+      "amount":140,
+      "name":"Infantry Equipment"
+    }
+  ],
+  "Marines":[
+    {
+      "amount":150,
+      "name":"Infantry Equipment"
+    }
+  ],
+  "Paratrooper":[
+    {
+      "amount":130,
+      "name":"Infantry Equipment"
+    }
+  ],
+  "AntiTank":[
+    {
+      "amount":36,
+      "name":"Anti-Tank"
+    }
+  ],
+  "AntiAir":[
+    {
+      "amount":30,
+      "name":"Anti-Air"
+    }
+  ],
+  "Artillery":[
+    {
+      "amount":36,
+      "name":"Artillery"
+    }
+  ],
+  "RocketArtillery":[
+    {
+      "amount":36,
+      "name":"Rocket Artillery"
+    }
+  ],
+  "MotorizedRocketArtillery":[
+    {
+      "amount":20,
+      "name":"Motorized Rocket Artillery"
+    },
+    {
+      "amount":15,
+      "name":"Motorized"
+    }
+  ],
+  "Cavalry":[
+    {
+      "amount":120,
+      "name":"Infantry Equipment"
+    }
+  ],
+  "MotorizedInfantry":[
+    {
+      "amount":100,
+      "name":"Infantry Equipment"
+    },
+    {
+      "amount":50,
+      "name":"Motorized"
+    }
+  ],
+  "MechanizedInfantry":[
+    {
+      "amount":100,
+      "name":"Infantry Equipment"
+    },
+    {
+      "amount":50,
+      "name":"Mechanized"
+    }
+  ],
+  "LightTank":[
+    {
+      "amount":60,
+      "name":"Light Tank"
+    }
+  ],
+  "MediumTank":[
+    {
+      "amount":50,
+      "name":"Medium Tank"
+    }
+  ],
+  "HeavyTank":[
+    {
+      "amount":40,
+      "name":"Heavy Tank"
+    }
+  ],
+  "SuperHeavyTank":[
+    {
+      "amount":15,
+      "name":"Super Heavy Tank"
+    }
+  ],
+  "ModernTank":[
+    {
+      "amount":50,
+      "name":"Modern Tank"
+    }
+  ],
+  "LightTD":[
+    {
+      "amount":30,
+      "name":"Light TD"
+    }
+  ],
+  " MediumTD":[
+    {
+      "amount":24,
+      "name":"Medium TD"
+    }
+  ],
+  "HeavyTD":[
+    {
+      "amount":20,
+      "name":"Heavy TD"
+    }
+  ],
+  "SuperHeavyTD":[
+    {
+      "amount":7,
+      "name":"Super Heavy TD"
+    }
+  ],
+  "ModernTD":[
+    {
+      "amount":24,
+      "name":"Heavy TD"
+    }
+  ],
+  "LightSPArtillery":[
+    {
+      "amount":50,
+      "name":"Light SP Artillery"
+    }
+  ],
+  " MediumSPArtillery":[
+    {
+      "amount":40,
+      "name":"Medium SP Artillery"
+    }
+  ],
+  "HeavySPArtillery":[
+    {
+      "amount":24,
+      "name":"Heavy SP Artillery"
+    }
+  ],
+  "SuperHeavySPArtillery":[
+    {
+      "amount":10,
+      "name":"Super Heavy SP Artillery"
+    }
+  ],
+  "ModernSPArtillery":[
+    {
+      "amount":40,
+      "name":"Heavy SP Artillery"
+    }
+  ],
+  "LightSPAntiAir":[
+    {
+      "amount":15,
+      "name":"Light Anti Air"
+    }
+  ],
+  " MediumSPAntiAir":[
+    {
+      "amount":12,
+      "name":"Medium Anti Air"
+    }
+  ],
+  "HeavySPAntiAir":[
+    {
+      "amount":8,
+      "name":"Heavy Anti Air"
+    }
+  ],
+  "SuperSPHeavyAntiAir":[
+    {
+      "amount":4,
+      "name":"Super Heavy Anti Air"
+    }
+  ],
+  "ModernSPAntiAir":[
+    {
+      "amount":12,
+      "name":"Heavy Anti Air"
+    }
+  ],
+  "SupportAntiTank":[
+    {
+      "amount":24,
+      "name":"Anti-Tank"
+    }
+  ],
+  "SupportAntiAir":[
+    {
+      "amount":20,
+      "name":"Anti-Air"
+    }
+  ],
+  "SupportArtillery":[
+    {
+      "amount":24,
+      "name":"Artillery"
+    }
+  ],
+  "SupportRocketArtillery":[
+    {
+      "amount":24,
+      "name":"Rocket Artillery"
+    }
+  ],
+  "ReconCompany":[
+    {
+      "amount":40,
+      "name":"Infantry Equipment"
+    },
+    {
+      "amount":10,
+      "name":"Support Equipment"
+    }
+  ],
+  "Pioneers":[
+    {
+      "amount":10,
+      "name":"Infantry Equipment"
+    },
+    {
+      "amount":30,
+      "name":"Support Equipment"
+    }
+  ],
+  "FieldHospital":[
+    {
+      "amount":20,
+      "name":"Motorized"
+    },
+    {
+      "amount":30,
+      "name":"Support Equipment"
+    }
+  ],
+  "LogisticCompany":[
+    {
+      "amount":10,
+      "name":"Motorized"
+    },
+    {
+      "amount":20,
+      "name":"Support Equipment"
+    }
+  ],
+  "MaintenanceCompany":[
+    {
+      "amount":25,
+      "name":"Support Equipment"
+    }
+  ],
+  "MilitaryPolice":[
+  {
+    "amount":40,
+    "name":"Infantry Equipment"
+  },
+  {
+    "amount":10,
+    "name":"Support Equipment"
+  }
+],
+  "SignalCompany":[
+    {
+      "amount":10,
+      "name":"Motorized"
+    },
+    {
+      "amount":50,
+      "name":"Support Equipment"
+    }
+  ]
+}
