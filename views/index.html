@@ -17,6 +17,16 @@
             <link rel="stylesheet" href="css/layouts/side-menu.css">
         <!--<![endif]-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114749288-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-114749288-1');
+    </script>
+
 </head>
 <body>
 
@@ -102,14 +112,14 @@
             <form class="pure-form pure-form-aligned">
                 <fieldset>
                     <div class="pure-control-group">
-                        <label for="fe">Factory Efficiency</label>
-                        <input id="fe" type="number" min="1" max="200" step="1" value="100">
+                        <label for="fe">Factory Efficiency Bonus</label>
+                        <input id="fe" type="number" min="0" max="100" step="1" value="0">
                         <span class="pure-form-message-inline">%</span>
                     </div>
 
                     <div class="pure-control-group">
                         <label for="pe">Production Efficiency</label>
-                        <input id="pe" type="number" min="1" max="200" step="1" value="50">
+                        <input id="pe" type="number" min="50" max="100" step="1" value="50">
                         <span class="pure-form-message-inline">%</span>
                     </div>
 
@@ -170,6 +180,8 @@
                         "<tr>"+
                         "<th>Equipment Type</th>"+
                         "<th>Number of Factories needed</th>"+
+                        "<th>Percent of Factories</th>"+
+                        "<th>Total Amount of Equipment needed in a "+outputperField.options[outputperField.selectedIndex].innerHTML+"</th>"+
                         "</tr>"+
                         "</thead>"+
                         "                <tbody>\n"
@@ -177,7 +189,9 @@
                         for(factory of data){
                             var insertData = "                <tr>\n" +
                             "                    <td>"+factory.name+"</td>\n" +
-                            "                    <td>"+factory.amount+"</td>\n" +
+                            "                    <td>"+factory.amountOfFactories+"</td>\n" +
+                                "                    <td>"+factory.percent+"%</td>\n" +
+                                "                    <td>"+factory.amountOfEquipment+"</td>\n" +
                             "                </tr>\n";
                             resultTable = resultTable.concat(insertData);
                         }
@@ -260,16 +274,19 @@
             "                <tr>\n" +
             "                    <td class='add'>Recon Company</tdclass>\n" +
             "                    <td class='add'>Maintenance Company</td>\n" +
+            "                    <td class='add'></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
             "                    <td class='add'>Support Artillery</tdclass>\n" +
             "                    <td class='add'>Support Anti Tank</td>\n" +
+            "                    <td class='add'></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
             "                    <td class='add'>Support Anti Air</td>\n" +
             "                    <td class='remove'>Remove</td>\n" +
+            "                    <td class='add'></td>\n" +
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";

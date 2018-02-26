@@ -12,7 +12,7 @@ var app = express();
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -59,6 +59,7 @@ app.post('/getResult', function (req, res, next) {
     res.status(400).send("Factory Efficiency is not a number");
     return;
   }
+  factoryEfficiency=factoryEfficiency+100;
   if(!sendObject.productionEfficiency){
     res.status(400).send("No Production Efficiency");
     return;
@@ -105,14 +106,22 @@ app.post('/getResult', function (req, res, next) {
         }
     }
     var assignedFactories = [];
+    var totalFactories=0;
     for(var equipmentItem in actualCost){
         if (actualCost.hasOwnProperty(equipmentItem)) {
             var factoryObject = {
                 name: equipmentItem,
-                amount: Math.ceil(((actualCost[equipmentItem].amount*equipmentCost[equipmentItem]*amountOfDivisions)/(baseProduction * (producationEfficiency/100)*(factoryEfficiency/100)))/outputPer)
+                amountOfFactories: Math.ceil(((actualCost[equipmentItem].amount*equipmentCost[equipmentItem]*amountOfDivisions)/(baseProduction * (producationEfficiency/100)*(factoryEfficiency/100)))/outputPer),
+                amountOfEquipment: actualCost[equipmentItem].amount*amountOfDivisions
             }
+            totalFactories=totalFactories+factoryObject.amountOfFactories;
             assignedFactories.push(factoryObject)
         }
+    }
+    if(totalFactories>0){
+      for(var i = 0; i < assignedFactories.length;i++){
+        assignedFactories[i].percent=Math.ceil((assignedFactories[i].amountOfFactories / totalFactories)*100);
+      }
     }
     res.status(200).send(assignedFactories);
 });
