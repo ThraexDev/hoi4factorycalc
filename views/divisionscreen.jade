@@ -1,0 +1,110 @@
+extends pagewrapper
+
+block content
+    #main
+        .header
+            h1 Hearts of Iron 4 Factory Calculator
+            h2 A simple tool to assign the right amount of factories
+        .content
+            h2.content-subhead How to use this Calculator:
+            p
+                | To use this calculator, just design your division template in the division designer below. Afterwards, enter some data about your desired production output and your production efficiency. Now hit the "Calculate!" Button and enjoy your result.
+            h2.content-subhead Now let's enter your data:
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label(for='template') You can select a template
+                        select#template(onchange="setTemplate()")
+                            option(value='empty') Empty
+                            option(value='20i') 20 Width Infantry
+                            option(value='40i') 40 Width Infantry
+                            option(value='20t') 20 Width Tanks
+                            option(value='40t') 40 Width Tanks
+                            option(value='spacemarines') Space Marines
+
+            |You can edit the table by clicking on the cells - use it like the division designer in the game.
+            #placeholder(style='position: relative; margin-bottom: 10px')
+            table#divisionTable.pure-table.pure-table-bordered
+                thead
+                    tr
+                        th Support
+                        th Battalion
+                        th Battalion
+                        th Battalion
+                        th Battalion
+                        th Battalion
+                tbody
+                    tr
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                    tr
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                    tr
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                    tr
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                    tr
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+                        td +
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label(for='fe') Factory Efficiency Bonus
+                        input#fe(type='number', min='0', max='100', step='1', value='0')
+                        span.pure-form-message-inline %
+                    .pure-control-group
+                        label(for='pe') Production Efficiency
+                        input#pe(type='number', min='50', max='100', step='1', value='50')
+                        span.pure-form-message-inline %
+                    .pure-control-group
+                        label(for='outputper') Output in
+                        input#time(type='number', min='1', max='100', step='1', value='1')
+                        select#outputper
+                            option(value='30') Month(s)
+                            option(value='1') Day(s)
+                            option(value='365') Year(s)
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label Set as Parameter
+                        button.pure-button#aodb(type='button' disabled=true onclick="enableAOD()") Amount of Divisions
+                    .pure-control-group
+                        label(for='aod') Amount of Divisions
+                        input#aod(type='number', min='1', max='1000', step='1', value='1')
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label Set as Parameter
+                        button.pure-button#aofb(type='button' onclick='enableAOF()') Amount of Factories
+                    .pure-control-group
+                        label(for='aof') Amount of Factories
+                        input#aof(type='number', min='1', max='1000', step='1', value='5' disabled=true)
+                    .pure-controls
+                        button.pure-button.pure-button-primary(type='button', onclick='sendCalcRequest()') Calculate!
+            h2.content-subhead Result:
+            p
+                #result
+    script(src='js/divisionscreen.js')

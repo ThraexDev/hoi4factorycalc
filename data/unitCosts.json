@@ -119,7 +119,7 @@
       "name":"Light TD"
     }
   ],
-  " MediumTD":[
+  "MediumTD":[
     {
       "amount":24,
       "name":"Medium TD"
@@ -149,7 +149,7 @@
       "name":"Light SP Artillery"
     }
   ],
-  " MediumSPArtillery":[
+  "MediumSPArtillery":[
     {
       "amount":40,
       "name":"Medium SP Artillery"
@@ -176,31 +176,31 @@
   "LightSPAntiAir":[
     {
       "amount":15,
-      "name":"Light Anti Air"
+      "name":"Light SP Anti Air"
     }
   ],
-  " MediumSPAntiAir":[
+  "MediumSPAntiAir":[
     {
       "amount":12,
-      "name":"Medium Anti Air"
+      "name":"Medium SP Anti Air"
     }
   ],
   "HeavySPAntiAir":[
     {
       "amount":8,
-      "name":"Heavy Anti Air"
+      "name":"Heavy SP Anti Air"
     }
   ],
-  "SuperSPHeavyAntiAir":[
+  "SuperHeavySPAntiAir":[
     {
       "amount":4,
-      "name":"Super Heavy Anti Air"
+      "name":"Super Heavy SP Anti Air"
     }
   ],
   "ModernSPAntiAir":[
     {
       "amount":12,
-      "name":"Heavy Anti Air"
+      "name":"Modern SP Anti Air"
     }
   ],
   "SupportAntiTank":[
@@ -237,7 +237,7 @@
       "name":"Support Equipment"
     }
   ],
-  "Pioneers":[
+  "Engineers":[
     {
       "amount":10,
       "name":"Infantry Equipment"
