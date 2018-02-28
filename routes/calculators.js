@@ -1,17 +1,39 @@
 var express = require('express');
 var unitCost = require("../data/unitCosts.json");
 var equipmentCost = require("../data/equipmentCost.json");
+var shipCost = require("../data/shipCost.json");
 var baseProduction = 5;
+var baseProductionDockyards = 2.5;
 var router = express.Router();
+
+router.post('/navyamount', function (req, res, next) {
+    var sendObject = req.body;
+    var shiptypes = sendObject.shiptypes;
+    var outputper = parseInt(sendObject.outputPer);
+    var factoryEfficieny = parseInt(sendObject.factoryEfficiency)+100;
+    var totalCost = 0;
+    for(var shiptype of shiptypes){
+        totalCost = totalCost + shipCost[shiptype.type]*shiptype.amount;
+    }
+    var factoriesNeeded = Math.ceil(totalCost/(baseProductionDockyards*(factoryEfficieny/100)*outputper));
+    var sendObject={
+        factoriesNeeded:factoriesNeeded
+    }
+    res.status(200).send(sendObject);
+});
 
 router.post('/divisionamount', function (req, res, next) {
     var sendObject = req.body;
     var checkedData = checkDivisionInput(sendObject, res);
+    if(checkedData.error){
+        res.status(400).send(checkedData.errorMsg);
+        return;
+    }
     var assignedFactories = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,checkedData.amountOfDivisions,checkedData.outputPer).assignedFactories;
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=Math.round(assignedFactories[i].amountOfEquipment);
-        assignedFactories[i].amountOfFactories=Math.round(assignedFactories[i].amountOfFactories);
+        assignedFactories[i].amountOfFactories=Math.ceil(assignedFactories[i].amountOfFactories);
     }
     res.status(200).send(assignedFactories);
 });
@@ -19,6 +41,10 @@ router.post('/divisionamount', function (req, res, next) {
 router.post('/divisionfactories', function (req, res, next) {
     var sendObject = req.body;
     var checkedData = checkDivisionInput(sendObject, res);
+    if(checkedData.error){
+        res.status(400).send(checkedData.errorMsg);
+        return;
+    }
     var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,1000000,1);
     var assignedFactories = factoryInfo.assignedFactories;
     var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000*checkedData.outputPer);
@@ -79,78 +105,80 @@ function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionE
 };
 
 function checkDivisionInput(sendObject, res) {
+    var error = false;
+    var errorMsg = [];
     if(!sendObject){
-        res.status(400).send("No Payload");
-        return;
+        errorMsg.push("No Payload");
+        error=true;
     }
     if(!sendObject.battalions){
-        res.status(400).send("No Battalions");
-        return;
+        errorMsg.push("No Battalions");
+        error=true;
     }
     var battalions = sendObject.battalions;
     if(!Array.isArray(battalions)){
-        res.status(400).send("Battalions wrong Format");
-        return;
+        errorMsg.push("Battalions wrong Format");
+        error=true;
     }
     if(battalions.length != 5){
-        res.status(400).send("Battalions wrong Format");
-        return;
+        errorMsg.push("Battalions wrong Format");
+        error=true;
     }
     for(var battalion of battalions){
         if(!Array.isArray(battalion)){
-            res.status(400).send("Battalions wrong Format");
-            return;
+            errorMsg.push("Battalions wrong Format");
+            error=true;
         }
         if(battalion.length != 6){
-            res.status(400).send("Battalions wrong Format");
-            return;
+            errorMsg.push("Battalions wrong Format");
+            error=true;
         }
     }
     if(!sendObject.factoryEfficiency){
-        res.status(400).send("No Factory Efficency");
-        return;
+        errorMsg.push("No Factory Efficency");
+        error=true;
     }
     var factoryEfficiency = parseInt(sendObject.factoryEfficiency);
     if(isNaN(factoryEfficiency)){
-        res.status(400).send("Factory Efficiency is not a number");
-        return;
+        errorMsg.push("Factory Efficiency is not a number");
+        error=true;
     }
     factoryEfficiency=factoryEfficiency+100;
     if(!sendObject.productionEfficiency){
-        res.status(400).send("No Production Efficiency");
-        return;
+        errorMsg.push("No Production Efficiency");
+        error=true;
     }
     var producationEfficiency = parseInt(sendObject.productionEfficiency);
     if(isNaN(producationEfficiency)){
-        res.status(400).send("Production Efficiency is not a number");
-        return;
+        errorMsg.push("Production Efficiency is not a number");
+        error=true;
     }
     if(!sendObject.amountOfDivisions){
-        res.status(400).send("No Division Amount");
-        return;
+        errorMsg.push("No Division Amount");
+        error=true;
     }
     var amountOfDivisions = parseInt(sendObject.amountOfDivisions);
     if(isNaN(amountOfDivisions)){
-        res.status(400).send("Amount of Divisions is not a number");
-        return;
+        errorMsg.push("Amount of Divisions is not a number");
+        error=true;
     }
     if(!sendObject.outputPer){
-        res.status(400).send("No Output Time defined");
-        return;
+        errorMsg.push("No Output Time defined");
+        error=true;
     }
     var outputPer = parseInt(sendObject.outputPer);
     if(isNaN(outputPer)){
-        res.status(400).send("Output per Time is not a number");
-        return;
+        errorMsg.push("Output per Time is not a number");
+        error=true;
     }
     if(!sendObject.amountOfFactories){
-        res.status(400).send("No Factories Amount");
-        return;
+        errorMsg.push("No Factories Amount");
+        error=true;
     }
     var amountOfFactories = parseInt(sendObject.amountOfFactories);
     if(isNaN(amountOfDivisions)){
-        res.status(400).send("Amount of Factories is not a number");
-        return;
+        errorMsg.push.send("Amount of Factories is not a number");
+        error=true;
     }
     var checkedObject={
         battalions:battalions,
@@ -158,7 +186,9 @@ function checkDivisionInput(sendObject, res) {
         producationEfficiency:producationEfficiency,
         amountOfDivisions:amountOfDivisions,
         outputPer:outputPer,
-        amountOfFactories:amountOfFactories
+        amountOfFactories:amountOfFactories,
+        error:error,
+        errorMsg:errorMsg
     }
     return checkedObject;
 }

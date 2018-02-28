@@ -1,0 +1,74 @@
+extends pagewrapper
+
+block content
+    #main
+        .header
+            h1 Hearts of Iron 4 Factory Calculator
+            h2 A simple tool to assign the right amount of factories
+        .content
+            h2.content-subhead How to use this Calculator:
+            p
+                | To use this calculator, just design your division template in the division designer below. Afterwards, enter some data about your desired production output and your production efficiency. Now hit the "Calculate!" Button and enjoy your result.
+            h2.content-subhead Now let's enter your data:
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group#group1
+                        label Naval Unit 1
+                        input#amount1(type='number', min='0', max='1000', step='1', value='1')
+                        select#type1
+                            option(value='dd1') Destroyer I
+                            option(value='dd2') Destroyer II
+                            option(value='dd3') Destroyer III
+                            option(value='dd4') Destroyer IV
+                            option(value='lc1') Light Cruiser I
+                            option(value='lc2') Light Cruiser II
+                            option(value='lc3') Light Cruiser III
+                            option(value='lc4') Light Cruiser IV
+                            option(value='hc1') Heavy Cruiser I
+                            option(value='hc2') Heavy Cruiser II
+                            option(value='hc3') Heavy Cruiser III
+                            option(value='hc4') Heavy Cruiser IV
+                            option(value='bc1') Battlecruiser I
+                            option(value='bc2') Battlecruiser II
+                            option(value='bb1') Battleship I
+                            option(value='bb2') Battleship II
+                            option(value='bb3') Battleship III
+                            option(value='bb4') Battleship IV
+                            option(value='sh1') SH Battleship I
+                            option(value='sh2') SH Battleship II
+                            option(value='cv1') Carrier I
+                            option(value='cv2') Carrier II
+                            option(value='cv3') Carrier III
+                            option(value='cv4') Carrier IV
+                            option(value='ss1') Submarine I
+                            option(value='ss2') Submarine II
+                            option(value='ss3') Submarine III
+                            option(value='ss4') Submarine IV
+
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label New Parameter
+                        button.pure-button(type='button' onclick="addShipField()") add ship type
+
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-control-group
+                        label(for='fe') Factory Efficiency Bonus
+                        input#fe(type='number', min='0', max='100', step='1', value='0')
+                        span.pure-form-message-inline %
+                    .pure-control-group
+                        label(for='outputper') Output in
+                        input#time(type='number', min='1', max='100', step='1', value='1')
+                        select#outputper
+                            option(value='30') Month(s)
+                            option(value='1') Day(s)
+                            option(value='365') Year(s)
+            form.pure-form.pure-form-aligned
+                fieldset
+                    .pure-controls
+                        button.pure-button.pure-button-primary(type='button', onclick='sendCalcRequest()') Calculate!
+            h2.content-subhead Result:
+            p
+                #result
+    script(src='js/navalscreen.js')
