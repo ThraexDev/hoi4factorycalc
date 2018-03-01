@@ -3,12 +3,14 @@ extends pagewrapper
 block content
     #main
         .header
-            h1 Hearts of Iron 4 Factory Calculator
-            h2 A simple tool to assign the right amount of factories
+            h1 Hearts of Iron 4 Navy Calculator
+            h2 a tool for planning you navy buildup
         .content
             h2.content-subhead How to use this Calculator:
             p
-                | To use this calculator, just design your division template in the division designer below. Afterwards, enter some data about your desired production output and your production efficiency. Now hit the "Calculate!" Button and enjoy your result.
+                |To use this calculator, simply select a ship type and enter how many of those ships you want to build. If you want to build multiple ship types, just click on "add ship type". Afterwards, enter some data about your factory efficiency and the time span of this calculation. Now hit the "Calculate!" Button and enjoy your result.
+                p
+                |Because you can only assign 15 dockyards to one ship at a time, you wont always have your fleet ready at the given time span. This value just represents the number of dockyards that you need to have a constant output of the given ships in the given time span, seen over a longer period.
             h2.content-subhead Now let's enter your data:
             form.pure-form.pure-form-aligned
                 fieldset
@@ -71,4 +73,7 @@ block content
             h2.content-subhead Result:
             p
                 #result
+            p
+                a(href="/")
+                    button.pure-button back to main page
     script(src='js/navalscreen.js')

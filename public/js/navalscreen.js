@@ -22,7 +22,8 @@ function sendCalcRequest() {
     $.ajax({url: "/calculator/navyamount",contentType: 'application/json', type: 'POST', data: JSON.stringify(sendObject), dataType: 'json',
         success: function(data, textStatus, xhr){
             if(xhr.status==200){
-                document.getElementById('result').innerHTML = "You will need "+data.factoriesNeeded+" dockyards to produce the given amount of ships in the given time. Because you can only assign 15 dockyards to one ship at a time, you wont always have your fleet ready at the given time span. This value just represents the number of dockyards that you need to have a constant output of the given ships in the given time span, seen over a longer period.";
+                document.getElementById('result').innerHTML = "You will need "+data.factoriesNeeded+" dockyards to produce the given amount of ships in the given time.";
+                window.scrollTo(0,document.body.scrollHeight);
             }
         }});
 }

@@ -14,4 +14,8 @@ router.get('/navycalculator', function(req, res, next) {
     res.render('navyscreen');
 });
 
+router.get('/aircraftcalculator', function(req, res, next) {
+    res.render('aircraftscreen');
+});
+
 module.exports = router;

@@ -3,12 +3,14 @@ extends pagewrapper
 block content
     #main
         .header
-            h1 Hearts of Iron 4 Factory Calculator
-            h2 A simple tool to assign the right amount of factories
+            h1 Hearts of Iron 4 Division Calculator
+            h2 a tool for planning you army buildup
         .content
             h2.content-subhead How to use this Calculator:
             p
-                | To use this calculator, just design your division template in the division designer below. Afterwards, enter some data about your desired production output and your production efficiency. Now hit the "Calculate!" Button and enjoy your result.
+                | To use this calculator, just use a provided template or design your division from the scratch in the division designer below. You can also choose a template and edit it in the designer. Afterwards, enter some data about your production efficiency, factory efficiency and the time span of this calculation. Now you can specify if you either provide a number of divisions you want to equip in the time span and get the number of factories you need to do so, or you can provide the number of factories that you have and the calculator will tell you how to assign this factories in the best way and how many divisions you can produce with it. Finally hit the "Calculate!" Button and enjoy your result.
+                p
+                | If you provide the calculator a number of factories and let it assign them by itself, it can happen that one factory get assigned to less or to much. This happens due to a rounding problem. This problem occurs specially if you assign a very low number of factories to a complex template.
             h2.content-subhead Now let's enter your data:
             form.pure-form.pure-form-aligned
                 fieldset
@@ -18,6 +20,7 @@ block content
                             option(value='empty') Empty
                             option(value='20i') 20 Width Infantry
                             option(value='40i') 40 Width Infantry
+                            option(value='40iat') 40 Width Infantry With Anti Tank
                             option(value='20t') 20 Width Tanks
                             option(value='40t') 40 Width Tanks
                             option(value='spacemarines') Space Marines
@@ -107,4 +110,7 @@ block content
             h2.content-subhead Result:
             p
                 #result
+            p
+                a(href="/")
+                    button.pure-button back to main page
     script(src='js/divisionscreen.js')

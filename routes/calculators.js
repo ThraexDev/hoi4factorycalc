@@ -2,9 +2,41 @@ var express = require('express');
 var unitCost = require("../data/unitCosts.json");
 var equipmentCost = require("../data/equipmentCost.json");
 var shipCost = require("../data/shipCost.json");
+var planeCost = require("../data/planeCost.json");
 var baseProduction = 5;
 var baseProductionDockyards = 2.5;
 var router = express.Router();
+
+router.post('/airforceamount', function (req, res, next) {
+    var sendObject = req.body;
+    var planetypes = sendObject.planetypes;
+    var outputper = parseInt(sendObject.outputPer);
+    var factoryEfficieny = parseInt(sendObject.factoryEfficiency)+100;
+    var productionEfficienvy = parseInt(sendObject.producationEfficiency);
+    var condesedPlaneTypes = {};
+    for(var planetype of planetypes){
+        if(condesedPlaneTypes[planetype.type]){
+            condesedPlaneTypes[planetype.type].amount = parseInt(condesedPlaneTypes[planetype.type].amount) + parseInt(planetype.amount);
+        }
+        else {
+            condesedPlaneTypes[planetype.type]={
+                amount:planetype.amount,
+                name:planetype.name
+            };
+        }
+    }
+    var factoriesPerPlane=[]
+    for(var planetype in condesedPlaneTypes) {
+        if (condesedPlaneTypes.hasOwnProperty(planetype)) {
+                factorieObject = {
+                    amount: Math.ceil((planeCost[planetype]*condesedPlaneTypes[planetype].amount)/(baseProduction*(productionEfficienvy/100)*(factoryEfficieny/100)*outputper)),
+                    name:condesedPlaneTypes[planetype].name
+                }
+                factoriesPerPlane.push(factorieObject);
+        }
+    }
+    res.status(200).send(factoriesPerPlane);
+});
 
 router.post('/navyamount', function (req, res, next) {
     var sendObject = req.body;

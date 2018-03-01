@@ -4,6 +4,7 @@ var inf40w={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantr
 var t20={"battalions":[["Recon Company\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","Motorized Infantry","+"],["Engineers","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","Motorized Infantry","+"],["Support Artillery\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","+","+","+"],["Maintenance Company","+","+","+","+","+"],["+","+","+","+","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
 var t40={"battalions":[["Recon Company\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","+"],["Engineers","Medium Tank\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","+"],["Support Artillery\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","+"],["Maintenance Company","Medium Tank\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","+"],["+","Medium Tank\n                    ","Medium Tank\n                    ","Medium Tank\n                    ","Motorized Infantry","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
 var spacemarines={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Heavy TD"],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","+"],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
+var inf40wat={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30,"amountOfFactories":"5"};
 var factoriesgiven=false;
 sendCalcRequest= function () {
     var outputperField = document.getElementById("outputper");
@@ -85,6 +86,7 @@ sendCalcRequest= function () {
                     resultTable = resultTable.concat("                </tbody>\n" +
                         "            </table>");
                     document.getElementById('result').innerHTML = resultTable;
+                    window.scrollTo(0,document.body.scrollHeight);
                 }
             }});
     }
@@ -313,6 +315,9 @@ var setTemplate = function () {
     }
     if(templateID=="40i"){
         templateToTable(inf40w);
+    }
+    if(templateID=="40iat"){
+        templateToTable(inf40wat);
     }
     if(templateID=="20t"){
         templateToTable(t20);
