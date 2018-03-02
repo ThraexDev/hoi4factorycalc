@@ -61,7 +61,7 @@ router.post('/divisionamount', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var assignedFactories = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,checkedData.amountOfDivisions,checkedData.outputPer).assignedFactories;
+    var assignedFactories = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=Math.round(assignedFactories[i].amountOfEquipment);
@@ -77,7 +77,7 @@ router.post('/divisionfactories', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,1000000,1);
+    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,1000000,1,checkedData.level);
     var assignedFactories = factoryInfo.assignedFactories;
     var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000*checkedData.outputPer);
     for(var i = 0; i < assignedFactories.length; i++){
@@ -92,7 +92,7 @@ router.post('/divisionfactories', function (req, res, next) {
     res.status(200).send(sendObject);
 });
 
-function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionEfficiency, amountOfDivisions, outputPer) {
+function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionEfficiency, amountOfDivisions, outputPer, level) {
     actualCost ={};
     for(var battalion of battalions){
         for(var unit of battalion){
@@ -115,9 +115,16 @@ function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionE
     var totalFactories=0;
     for(var equipmentItem in actualCost){
         if (actualCost.hasOwnProperty(equipmentItem)) {
+            var equipmentCostSingle = 0;
+            if(level[equipmentItem]){
+                equipmentCostSingle = equipmentCost[equipmentItem+" "+level[equipmentItem]];
+            }
+            else {
+                equipmentCostSingle = equipmentCost[equipmentItem];
+            }
             var factoryObject = {
                 name: equipmentItem,
-                amountOfFactories: ((actualCost[equipmentItem].amount*equipmentCost[equipmentItem]*amountOfDivisions)/(baseProduction * (productionEfficiency/100)*(factoryEfficiency/100)))/outputPer,
+                amountOfFactories: ((actualCost[equipmentItem].amount*equipmentCostSingle*amountOfDivisions)/(baseProduction * (productionEfficiency/100)*(factoryEfficiency/100)))/outputPer,
                 amountOfEquipment: actualCost[equipmentItem].amount*amountOfDivisions
             }
             totalFactories=totalFactories+factoryObject.amountOfFactories;
@@ -212,6 +219,7 @@ function checkDivisionInput(sendObject, res) {
         errorMsg.push.send("Amount of Factories is not a number");
         error=true;
     }
+    var level = sendObject.level;
     var checkedObject={
         battalions:battalions,
         factoryEfficiency:factoryEfficiency,
@@ -219,6 +227,7 @@ function checkDivisionInput(sendObject, res) {
         amountOfDivisions:amountOfDivisions,
         outputPer:outputPer,
         amountOfFactories:amountOfFactories,
+        level:level,
         error:error,
         errorMsg:errorMsg
     }

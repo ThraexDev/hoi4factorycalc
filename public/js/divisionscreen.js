@@ -12,9 +12,30 @@ sendCalcRequest= function () {
         battalions : [],
         factoryEfficiency: document.getElementById("fe").value,
         productionEfficiency: document.getElementById("pe").value,
+        productionEfficiencyCap: document.getElementById("pec").value,
         amountOfDivisions: document.getElementById("aod").value,
         outputPer: parseInt(outputperField.options[outputperField.selectedIndex].value)*document.getElementById("time").value,
-        amountOfFactories: document.getElementById("aof").value
+        amountOfFactories: document.getElementById("aof").value,
+        level: {
+            "Infantry Equipment":$("#infeql").val(),
+            "Anti-Tank":$("#atl").val(),
+            "Anti-Air":$("#aal").val(),
+            "Artillery":$("#artl").val(),
+            "Rocket Artillery":$("#ral").val(),
+            "Mechanized":$("#ml").val(),
+            "Light Tank":$("#ltl").val(),
+            "Medium Tank":$("#mtl").val(),
+            "Heavy Tank":$("#htl").val(),
+            "Light TD":$("#ltdl").val(),
+            "Medium TD":$("#mtdl").val(),
+            "Heavy TD":$("#htdl").val(),
+            "Light SP Artillery":$("#lspgl").val(),
+            "Medium SP Artillery":$("#mspgl").val(),
+            "Heavy SP Artillery":$("#hspgl").val(),
+            "Light SP Anti Air":$("#laal").val(),
+            "Medium SP Anti Air":$("#maal").val(),
+            "Heavy SP Anti Air":$("#haal").val()
+        }
     };
     var divisionTable = document.getElementById("divisionTable");
     if (divisionTable != null) {

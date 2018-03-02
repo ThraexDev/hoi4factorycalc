@@ -72,15 +72,133 @@ block content
                         td +
                         td +
                         td +
-            form.pure-form.pure-form-aligned
-                fieldset
+            .pure-g
+                form.pure-form.pure-form-aligned.pure-u-1.pure-u-lg-1-2
+                    fieldset
+                    legend Equipment Level
+                    .pure-control-group
+                        label Infantry Equipment
+                        select#infeql
+                            option(value='1') Basic
+                            option(value='2') I
+                            option(value='3') II
+                            option(value='4') III
+                    .pure-control-group
+                        label Artillery
+                        select#artl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Anti Tank
+                        select#atl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Anti Air
+                        select#aal
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Rocket Artillery
+                        select#ral
+                            option(value='1') I
+                            option(value='2') II
+                    .pure-control-group
+                        label Mechanized
+                        select#ml
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Light Tank
+                        select#ltl
+                            option(value='1') Basic
+                            option(value='2') I
+                            option(value='3') II
+                            option(value='4') III
+                    .pure-control-group
+                        label L. SPG
+                        select#lspgl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label L. Tank Destroyer
+                        select#ltdl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label L. Anti Air
+                        select#laal
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Medium Tank
+                        select#mtl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label M. SPG
+                        select#mspgl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label M. Tank Destroyer
+                        select#mtdl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label M. Anti Air
+                        select#maal
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label Heavy Tank
+                        select#htl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label H. SPG
+                        select#hspgl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label H. Tank Destroyer
+                        select#htdl
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                    .pure-control-group
+                        label H. Anti Air
+                        select#haal
+                            option(value='1') I
+                            option(value='2') II
+                            option(value='3') III
+                form.pure-form.pure-form-aligned.pure-u-1.pure-u-lg-1-2
+                    fieldset
+                    legend Production Data
                     .pure-control-group
                         label(for='fe') Factory Efficiency Bonus
                         input#fe(type='number', min='0', max='100', step='1', value='0')
                         span.pure-form-message-inline %
                     .pure-control-group
-                        label(for='pe') Production Efficiency
+                        label(for='pe') Production Efficiency at Start of Production
                         input#pe(type='number', min='50', max='100', step='1', value='50')
+                        span.pure-form-message-inline %
+                    .pure-control-group
+                        label(for='pe') Production Efficiency Cap
+                        input#pec(type='number', min='50', max='100', step='1', value='50')
                         span.pure-form-message-inline %
                     .pure-control-group
                         label(for='outputper') Output in
@@ -89,24 +207,23 @@ block content
                             option(value='30') Month(s)
                             option(value='1') Day(s)
                             option(value='365') Year(s)
-            form.pure-form.pure-form-aligned
-                fieldset
-                    .pure-control-group
-                        label Set as Parameter
-                        button.pure-button#aodb(type='button' disabled=true onclick="enableAOD()") Amount of Divisions
-                    .pure-control-group
-                        label(for='aod') Amount of Divisions
-                        input#aod(type='number', min='1', max='1000', step='1', value='1')
-            form.pure-form.pure-form-aligned
-                fieldset
-                    .pure-control-group
-                        label Set as Parameter
-                        button.pure-button#aofb(type='button' onclick='enableAOF()') Amount of Factories
-                    .pure-control-group
-                        label(for='aof') Amount of Factories
-                        input#aof(type='number', min='1', max='1000', step='1', value='5' disabled=true)
-                    .pure-controls
-                        button.pure-button.pure-button-primary(type='button', onclick='sendCalcRequest()') Calculate!
+                    fieldset
+                        .pure-control-group
+                            label Set as Parameter
+                            button.pure-button#aodb(type='button' disabled=true onclick="enableAOD()") Amount of Divisions
+                        .pure-control-group
+                            label(for='aod') Amount of Divisions
+                            input#aod(type='number', min='1', max='1000', step='1', value='1')
+                    fieldset
+                        .pure-control-group
+                            label Set as Parameter
+                            button.pure-button#aofb(type='button' onclick='enableAOF()') Amount of Factories
+                        .pure-control-group
+                            label(for='aof') Amount of Factories
+                            input#aof(type='number', min='1', max='1000', step='1', value='5' disabled=true)
+                    fieldset
+                        .pure-controls
+                            button.pure-button.pure-button-primary(type='button', onclick='sendCalcRequest()') Calculate!
             h2.content-subhead Result:
             p
                 #result
