@@ -56,8 +56,12 @@ block content
                         input#fe(type='number', min='0', max='100', step='1', value='0')
                         span.pure-form-message-inline %
                     .pure-control-group
-                        label(for='pe') Production Efficiency
-                        input#pe(type='number', min='50', max='100', step='1', value='50')
+                        label(for='pe') Production Efficiency at Start of Production
+                        input#pe(type='number', min='0', max='100', step='1', value='50' onchange="changePE()")
+                        span.pure-form-message-inline %
+                    .pure-control-group
+                        label Production Efficiency Cap
+                        input#pec(type='number', min='50', max='100', step='1', value='50' onchange="changePEC()")
                         span.pure-form-message-inline %
                     .pure-control-group
                         label(for='outputper') Output in

@@ -9,6 +9,7 @@ function sendCalcRequest() {
         planetypes : [],
         factoryEfficiency: document.getElementById("fe").value,
         producationEfficiency:document.getElementById("pe").value,
+        productionEfficiencyCap: document.getElementById("pec").value,
         outputPer: parseInt(outputperField.options[outputperField.selectedIndex].value)*document.getElementById("time").value
     };
     for (var i = 1; i < numberOfTypes+1; i++){
@@ -46,4 +47,16 @@ function sendCalcRequest() {
                 window.scrollTo(0,document.body.scrollHeight);
             }
         }});
+}
+
+function changePE() {
+    if($('#pe').val()>$('#pec').val()){
+        $('#pec').val($('#pe').val());
+    }
+}
+
+function changePEC() {
+    if($('#pe').val()>$('#pec').val()){
+        $('#pe').val($('#pec').val());
+    }
 }

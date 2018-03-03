@@ -361,4 +361,16 @@ var templateToTable= function (template) {
     }
 };
 
+function changePE() {
+    if($('#pe').val()>$('#pec').val()){
+        $('#pec').val($('#pe').val());
+    }
+}
+
+function changePEC() {
+    if($('#pe').val()>$('#pec').val()){
+        $('#pe').val($('#pec').val());
+    }
+}
+
 setOnClickTable("divisionTable", makeTypeTable, [], true, true, makeSupportTable);

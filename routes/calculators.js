@@ -12,7 +12,8 @@ router.post('/airforceamount', function (req, res, next) {
     var planetypes = sendObject.planetypes;
     var outputper = parseInt(sendObject.outputPer);
     var factoryEfficieny = parseInt(sendObject.factoryEfficiency)+100;
-    var productionEfficienvy = parseInt(sendObject.producationEfficiency);
+    var productionEfficiency = parseInt(sendObject.producationEfficiency);
+    var productionEfficiencyCap = parseInt(sendObject.productionEfficiencyCap);
     var condesedPlaneTypes = {};
     for(var planetype of planetypes){
         if(condesedPlaneTypes[planetype.type]){
@@ -29,7 +30,7 @@ router.post('/airforceamount', function (req, res, next) {
     for(var planetype in condesedPlaneTypes) {
         if (condesedPlaneTypes.hasOwnProperty(planetype)) {
                 factorieObject = {
-                    amount: Math.ceil((planeCost[planetype]*condesedPlaneTypes[planetype].amount)/(baseProduction*(productionEfficienvy/100)*(factoryEfficieny/100)*outputper)),
+                    amount: Math.ceil((planeCost[planetype]*condesedPlaneTypes[planetype].amount)/(baseProduction*(getAveragePE(productionEfficiency, productionEfficiencyCap, outputper)/100)*(factoryEfficieny/100)*outputper)),
                     name:condesedPlaneTypes[planetype].name
                 }
                 factoriesPerPlane.push(factorieObject);
@@ -61,7 +62,7 @@ router.post('/divisionamount', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var assignedFactories = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
+    var assignedFactories = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=Math.round(assignedFactories[i].amountOfEquipment);
@@ -77,7 +78,7 @@ router.post('/divisionfactories', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency,1000000,1,checkedData.level);
+    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,1,checkedData.level);
     var assignedFactories = factoryInfo.assignedFactories;
     var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000*checkedData.outputPer);
     for(var i = 0; i < assignedFactories.length; i++){
@@ -92,7 +93,7 @@ router.post('/divisionfactories', function (req, res, next) {
     res.status(200).send(sendObject);
 });
 
-function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionEfficiency, amountOfDivisions, outputPer, level) {
+function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionEfficiency, productionEfficiencyCap, amountOfDivisions, outputPer, level) {
     actualCost ={};
     for(var battalion of battalions){
         for(var unit of battalion){
@@ -124,7 +125,7 @@ function calculateDivisionsFromAmount(battalions, factoryEfficiency, productionE
             }
             var factoryObject = {
                 name: equipmentItem,
-                amountOfFactories: ((actualCost[equipmentItem].amount*equipmentCostSingle*amountOfDivisions)/(baseProduction * (productionEfficiency/100)*(factoryEfficiency/100)))/outputPer,
+                amountOfFactories: ((actualCost[equipmentItem].amount*equipmentCostSingle*amountOfDivisions)/(baseProduction * (getAveragePE(productionEfficiency, productionEfficiencyCap, outputPer)/100)*(factoryEfficiency/100)))/outputPer,
                 amountOfEquipment: actualCost[equipmentItem].amount*amountOfDivisions
             }
             totalFactories=totalFactories+factoryObject.amountOfFactories;
@@ -192,6 +193,11 @@ function checkDivisionInput(sendObject, res) {
         errorMsg.push("Production Efficiency is not a number");
         error=true;
     }
+    var producationEfficiencyCap = parseInt(sendObject.productionEfficiencyCap);
+    if(isNaN(producationEfficiencyCap)){
+        errorMsg.push("Production Efficiency Cap is not a number");
+        error=true;
+    }
     if(!sendObject.amountOfDivisions){
         errorMsg.push("No Division Amount");
         error=true;
@@ -224,6 +230,7 @@ function checkDivisionInput(sendObject, res) {
         battalions:battalions,
         factoryEfficiency:factoryEfficiency,
         producationEfficiency:producationEfficiency,
+        producationEfficiencyCap:producationEfficiencyCap,
         amountOfDivisions:amountOfDivisions,
         outputPer:outputPer,
         amountOfFactories:amountOfFactories,
@@ -232,6 +239,24 @@ function checkDivisionInput(sendObject, res) {
         errorMsg:errorMsg
     }
     return checkedObject;
+}
+
+function getAveragePE(peStart, peCap, time) {
+    var timeToRise = 500*peCap*peCap - 500*peStart*peStart;
+    if(timeToRise <=0) return peStart;
+    var timeToPe =Math.pow((peStart/peCap),2)*500;
+    if(timeToRise >= time){
+        return AveragePeDuringRise(timeToPe, time, peCap);
+    }
+    else {
+        var part = timeToRise/time;
+        var risingPart = AveragePeDuringRise(timeToPe, timeToRise, peCap);
+        return (risingPart*part)+(peCap*(1-part));
+    }
+}
+
+function AveragePeDuringRise(startTime, endTime, peCap) {
+    return (1/(endTime-startTime))*(((Math.pow(endTime, 1.5)* peCap)/ (15 *Math.sqrt(5)))-((Math.pow(startTime, 1.5)* peCap)/ (15 *Math.sqrt(5))));
 }
 
 module.exports = router;
