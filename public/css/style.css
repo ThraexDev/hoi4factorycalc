@@ -26,3 +26,11 @@
 .button-blue{
   background: deepskyblue;
 }
+
+.footer {
+  font-size: 87.5%;
+  border-top: 1px solid #eee;
+  margin-top: 3.4286em;
+  padding: 1.1429em;
+  background: rgb(250, 250, 250);
+}

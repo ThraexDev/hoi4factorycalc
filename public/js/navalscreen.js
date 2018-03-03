@@ -23,7 +23,7 @@ function sendCalcRequest() {
         success: function(data, textStatus, xhr){
             if(xhr.status==200){
                 document.getElementById('result').innerHTML = "You will need "+data.factoriesNeeded+" dockyards to produce the given amount of ships in the given time.";
-                window.scrollTo(0,document.body.scrollHeight);
             }
         }});
+    window.scrollTo(0,document.body.scrollHeight);
 }

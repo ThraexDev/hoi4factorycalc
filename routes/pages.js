@@ -18,4 +18,8 @@ router.get('/aircraftcalculator', function(req, res, next) {
     res.render('aircraftscreen');
 });
 
+router.get('/legalnotice', function(req, res, next) {
+    res.render('legalnotice');
+});
+
 module.exports = router;

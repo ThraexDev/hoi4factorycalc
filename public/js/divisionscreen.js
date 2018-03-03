@@ -107,10 +107,11 @@ sendCalcRequest= function () {
                     resultTable = resultTable.concat("                </tbody>\n" +
                         "            </table>");
                     document.getElementById('result').innerHTML = resultTable;
-                    window.scrollTo(0,document.body.scrollHeight);
+
                 }
             }});
     }
+    window.scrollTo(0,document.body.scrollHeight);
 };
 
 var setOnClickTable = function (id, callback, parameter, header, firstColumnSupport, callbackSupport) {
@@ -360,17 +361,5 @@ var templateToTable= function (template) {
         }
     }
 };
-
-function changePE() {
-    if($('#pe').val()>$('#pec').val()){
-        $('#pec').val($('#pe').val());
-    }
-}
-
-function changePEC() {
-    if($('#pe').val()>$('#pec').val()){
-        $('#pe').val($('#pec').val());
-    }
-}
 
 setOnClickTable("divisionTable", makeTypeTable, [], true, true, makeSupportTable);
