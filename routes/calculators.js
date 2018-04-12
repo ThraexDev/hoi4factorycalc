@@ -78,9 +78,9 @@ router.post('/divisionfactories', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,1,checkedData.level);
+    var factoryInfo = calculateDivisionsFromAmount(checkedData.battalions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,checkedData.outputPer,checkedData.level);
     var assignedFactories = factoryInfo.assignedFactories;
-    var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000*checkedData.outputPer);
+    var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000);
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].amountOfFactories = Math.round((assignedFactories[i].percent*checkedData.amountOfFactories)/100)
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
