@@ -6,10 +6,11 @@ var t40={"battalions":[["Recon Company\n                    ","Medium Tank\n    
 var spacemarines={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Heavy TD"],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","+"],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
 var inf40wat={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30,"amountOfFactories":"5"};
 var factoriesgiven=false;
+var divisionNumbers = [];
 sendCalcRequest= function () {
     var outputperField = document.getElementById("outputper");
     var sendObject = {
-        battalions : [],
+        divisions : [],
         factoryEfficiency: document.getElementById("fe").value,
         productionEfficiency: document.getElementById("pe").value,
         productionEfficiencyCap: document.getElementById("pec").value,
@@ -37,14 +38,21 @@ sendCalcRequest= function () {
             "Heavy SP Anti Air":$("#haal").val()
         }
     };
-    var divisionTable = document.getElementById("divisionTable");
-    if (divisionTable != null) {
-        for (var i = 1; i < divisionTable.rows.length; i++) {
-            var unitList = [];
-            for (var j = 0; j < divisionTable.rows[i].cells.length; j++){
-                unitList.push(divisionTable.rows[i].cells[j].innerHTML.toString());
+    for(var divisionNumber of divisionNumbers){
+        var divisionTable = document.getElementById("divisionTable"+divisionNumber);
+        if (divisionTable != null) {
+            var division = {
+                battalions:[],
+                percent:document.getElementById("percent"+divisionNumber).value
+            };
+            for (var i = 1; i < divisionTable.rows.length; i++) {
+                var unitList = [];
+                for (var j = 0; j < divisionTable.rows[i].cells.length; j++){
+                    unitList.push(divisionTable.rows[i].cells[j].innerHTML.toString());
+                }
+                division.battalions.push(unitList);
             }
-            sendObject.battalions.push(unitList);
+            sendObject.divisions.push(division);
         }
     }
     if(factoriesgiven){
@@ -125,30 +133,123 @@ var setOnClickTable = function (id, callback, parameter, header, firstColumnSupp
                     if(firstColumnSupport){
                         table.rows[i].cells[j].onclick = function () {
                             parameter.push(this);
-                            callbackSupport(parameter);
+                            callbackSupport(parameter,id);
                         };
                     }
                     else{
                         table.rows[i].cells[j].onclick = function () {
                             parameter.push(this);
-                            callback(parameter);
+                            callback(parameter,id);
                         };
                     }
                 }
                 else {
                     table.rows[i].cells[j].onclick = function () {
                         parameter.push(this);
-                        callback(parameter);
+                        callback(parameter,id);
                     };
                 }
         }
     }
 };
 
-var makeTypeTable = function (tableCells) {
+var makeDivisionDesigner = function () {
+    var id = 1;
+    if(divisionNumbers.length>0){
+        id = Math.max(...divisionNumbers)+1;
+    }
+    divisionNumbers.push(parseInt(id));
+    var divisionDesigner = "<div id=\"divisionTemplate"+id+"\">\n" +
+        "   <h3 class=\"content-subhead\">"+id+". Division template</h3>\n" +
+        "   <form class=\"pure-form pure-form-aligned\">\n" +
+        "      <fieldset>\n" +
+        "         <div class=\"pure-control-group\"><label>Click here to remove the division template</label><button type=\"button\" onclick=\"removeDivision("+id+")\" class=\"pure-button\">Remove</button></div>\n" +
+        "         <div class=\"pure-control-group\">\n" +
+        "            <label for=\"template"+id+"\">(Optional) You can select a premade division blueprint</label>\n" +
+        "            <select id=\"template"+id+"\" onchange=\"setTemplate("+id+")\">\n" +
+        "               <option value=\"empty\">Empty</option>\n" +
+        "               <option value=\"20i\">20 Width Infantry</option>\n" +
+        "               <option value=\"40i\">40 Width Infantry</option>\n" +
+        "               <option value=\"40iat\">40 Width Infantry With Anti Tank</option>\n" +
+        "               <option value=\"20t\">20 Width Tanks</option>\n" +
+        "               <option value=\"40t\">40 Width Tanks</option>\n" +
+        "               <option value=\"spacemarines\">Space Marines</option>\n" +
+        "            </select>\n" +
+        "         </div>\n" +
+        "         <div class=\"pure-control-group\"><label for=\"percent"+id+"\">% of divisions that will be recruited with this template</label><input id=\"percent"+id+"\" type=\"number\" min=\"0\" max=\"100\" step=\"1\" value=\"100\"><span class=\"pure-form-message-inline\">%</span></div>\n" +
+        "      </fieldset>\n" +
+        "   </form>\n" +
+        "   <strong>You can edit the table by clicking on the cells - use it like the division designer in the game.</strong>\n" +
+        "   <div id=\"placeholder"+id+"\" style=\"position: relative; margin-bottom: 10px\"></div>\n" +
+        "   <table id=\"divisionTable"+id+"\" class=\"pure-table pure-table-bordered\">\n" +
+        "      <thead>\n" +
+        "         <tr>\n" +
+        "            <th>Support</th>\n" +
+        "            <th>Battalion</th>\n" +
+        "            <th>Battalion</th>\n" +
+        "            <th>Battalion</th>\n" +
+        "            <th>Battalion</th>\n" +
+        "            <th>Battalion</th>\n" +
+        "         </tr>\n" +
+        "      </thead>\n" +
+        "      <tbody>\n" +
+        "         <tr>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "         </tr>\n" +
+        "         <tr>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "         </tr>\n" +
+        "         <tr>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "         </tr>\n" +
+        "         <tr>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "         </tr>\n" +
+        "         <tr>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "            <td>+</td>\n" +
+        "         </tr>\n" +
+        "      </tbody>\n" +
+        "   </table>\n" +
+        "</div>";
+    $("#divisionTemplates").append(divisionDesigner);
+    setOnClickTable("divisionTable"+id, makeTypeTable, [], true, true, makeSupportTable);
+}
+
+var removeDivision = function (id) {
+    $("#divisionTemplate"+id).remove();
+    divisionNumbers.splice(divisionNumbers.indexOf(id), 1);
+}
+
+var makeTypeTable = function (tableCells,id) {
     var newTableCell = [];
+    var idNumber = id.replace("divisionTable","");
     newTableCell.push(tableCells[tableCells.length-1]);
-    var unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"typeTable\">\n" +
+    var unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"typeTable"+idNumber+"\">\n" +
         "                <tbody>\n" +
         "                <tr>\n" +
         "                    <td class='add'>Infantry Battalion</td>\n" +
@@ -161,14 +262,15 @@ var makeTypeTable = function (tableCells) {
         "                </tr>\n" +
         "                </tbody>\n" +
         "            </table>";
-    document.getElementById('placeholder').innerHTML = unitTable;
-    setOnClickTable("typeTable", makeUnitTable, newTableCell)
+    document.getElementById('placeholder'+idNumber).innerHTML = unitTable;
+    setOnClickTable("typeTable"+idNumber, makeUnitTable, newTableCell)
 };
 
-var makeSupportTable = function (tableCells) {
+var makeSupportTable = function (tableCells, id) {
     var newTableCell = [];
+    var idNumber = id.replace("divisionTable","");
     newTableCell.push(tableCells[tableCells.length-1]);
-    var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"supportTable\">\n" +
+    var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"supportTable"+idNumber+"\">\n" +
         "                <tbody>\n" +
         "                <tr>\n" +
         "                    <td class='add'>Engineers</td>\n" +
@@ -201,13 +303,14 @@ var makeSupportTable = function (tableCells) {
         "                </tr>\n" +
         "                </tbody>\n" +
         "            </table>";
-    document.getElementById('placeholder').innerHTML = myTable;
-    setOnClickTable("supportTable", selectUnit, newTableCell);
+    document.getElementById('placeholder'+idNumber).innerHTML = myTable;
+    setOnClickTable("supportTable"+idNumber, selectUnit, newTableCell);
 };
 
-var makeUnitTable = function (tableCells) {
+var makeUnitTable = function (tableCells, id) {
+    var idNumber = id.replace("typeTable","");
     if(tableCells[tableCells.length-1].innerHTML.toString()=="Infantry Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"infanteryTable\">\n" +
+        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"infanteryTable"+idNumber+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
             "                    <td class='add'>Infantry</td>\n" +
@@ -230,11 +333,11 @@ var makeUnitTable = function (tableCells) {
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder').innerHTML = myTable;
-        setOnClickTable("infanteryTable", selectUnit, tableCells);
+        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
+        setOnClickTable("infanteryTable"+idNumber, selectUnit, tableCells);
     };
     if(tableCells[tableCells.length-1].innerHTML.toString()=="Mobile Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"mobileTable\">\n" +
+        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"mobileTable"+idNumber+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
             "                    <td class='add'>Cavalry</td>\n" +
@@ -247,11 +350,11 @@ var makeUnitTable = function (tableCells) {
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder').innerHTML = myTable;
-        setOnClickTable("mobileTable", selectUnit, tableCells);
+        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
+        setOnClickTable("mobileTable"+idNumber, selectUnit, tableCells);
     };
     if(tableCells[tableCells.length-1].innerHTML.toString()=="Armored Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"armoredTable\">\n" +
+        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"armoredTable"+idNumber+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
             "                    <td class='add'>Light Tank</td>\n" +
@@ -289,25 +392,38 @@ var makeUnitTable = function (tableCells) {
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder').innerHTML = myTable;
-        setOnClickTable("armoredTable", selectUnit, tableCells);
+        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
+        setOnClickTable("armoredTable"+idNumber, selectUnit, tableCells);
     };
     if(tableCells[tableCells.length-1].innerHTML.toString()=="Remove"){
         tableCells[0].innerHTML="+";
-        document.getElementById('placeholder').innerHTML = "";
+        document.getElementById('placeholder'+idNumber).innerHTML = "";
     };
 };
 
 
 
-var selectUnit = function (tableCells) {
+var selectUnit = function (tableCells,id) {
+    var idNumber;
+    if(id.startsWith("supportTable")){
+        idNumber=id.replace("supportTable","");
+    }
+    if(id.startsWith("infanteryTable")){
+        idNumber=id.replace("infanteryTable","");
+    }
+    if(id.startsWith("mobileTable")){
+        idNumber=id.replace("mobileTable","");
+    }
+    if(id.startsWith("armoredTable")){
+        idNumber=id.replace("armoredTable","");
+    }
     if(tableCells[tableCells.length-1].innerHTML.toString()=="Remove"){
         tableCells[0].innerHTML="+";
     }
     else {
         tableCells[0].innerHTML=tableCells[tableCells.length-1].innerHTML;
     }
-    document.getElementById('placeholder').innerHTML = "";
+    document.getElementById('placeholder'+idNumber).innerHTML = "";
 };
 
 var enableAOF = function () {
@@ -326,35 +442,35 @@ var enableAOD = function () {
     factoriesgiven=false;
 };
 
-var setTemplate = function () {
-    var templateSelect = document.getElementById("template");
+var setTemplate = function (id) {
+    var templateSelect = document.getElementById("template"+id);
     var templateID = templateSelect.options[templateSelect.selectedIndex].value;
     if(templateID=="empty"){
-        templateToTable(empty);
+        templateToTable(empty,id);
     }
     if(templateID=="20i"){
-        templateToTable(inf20w);
+        templateToTable(inf20w,id);
     }
     if(templateID=="40i"){
-        templateToTable(inf40w);
+        templateToTable(inf40w,id);
     }
     if(templateID=="40iat"){
-        templateToTable(inf40wat);
+        templateToTable(inf40wat,id);
     }
     if(templateID=="20t"){
-        templateToTable(t20);
+        templateToTable(t20,id);
     }
     if(templateID=="40t"){
-        templateToTable(t40);
+        templateToTable(t40,id);
     }
     if(templateID=="spacemarines"){
-        templateToTable(spacemarines);
+        templateToTable(spacemarines,id);
     }
 };
 
-var templateToTable= function (template) {
+var templateToTable= function (template, id) {
     var battalions = template.battalions;
-    var table = document.getElementById('divisionTable');
+    var table = document.getElementById('divisionTable'+id);
     for(var i = 0; i < battalions.length; i++){
         for(var j = 0; j < battalions[i].length;j++){
             table.rows[i+1].cells[j].innerHTML=battalions[i][j];
@@ -362,4 +478,4 @@ var templateToTable= function (template) {
     }
 };
 
-setOnClickTable("divisionTable", makeTypeTable, [], true, true, makeSupportTable);
+makeDivisionDesigner();

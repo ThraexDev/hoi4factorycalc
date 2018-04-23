@@ -12,66 +12,9 @@ block content
                 p
                 | If you provide the calculator a number of factories and let it assign them by itself, it can happen that one factory get assigned to less or to much. This happens due to a rounding problem. This problem occurs specially if you assign a very low number of factories to a complex template.
             h2.content-subhead Now let's enter your data:
-            form.pure-form.pure-form-aligned
-                fieldset
-                    .pure-control-group
-                        label(for='template') You can select a template
-                        select#template(onchange="setTemplate()")
-                            option(value='empty') Empty
-                            option(value='20i') 20 Width Infantry
-                            option(value='40i') 40 Width Infantry
-                            option(value='40iat') 40 Width Infantry With Anti Tank
-                            option(value='20t') 20 Width Tanks
-                            option(value='40t') 40 Width Tanks
-                            option(value='spacemarines') Space Marines
-
-            |You can edit the table by clicking on the cells - use it like the division designer in the game.
-            #placeholder(style='position: relative; margin-bottom: 10px')
-            table#divisionTable.pure-table.pure-table-bordered
-                thead
-                    tr
-                        th Support
-                        th Battalion
-                        th Battalion
-                        th Battalion
-                        th Battalion
-                        th Battalion
-                tbody
-                    tr
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                    tr
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                    tr
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                    tr
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                    tr
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
-                        td +
+            #divisionTemplates
+            p
+                button.pure-button(type='button', onclick='makeDivisionDesigner()') + Add new division template
             .pure-g
                 form.pure-form.pure-form-aligned.pure-u-1.pure-u-lg-1-2
                     fieldset
@@ -227,8 +170,6 @@ block content
             h2.content-subhead Result:
             p
                 #result
-            p
-                a(href="/")
-                    button.pure-button back to main page
+
     script(src='js/divisionscreen.js')
     script(src='js/entryChecker.js')
