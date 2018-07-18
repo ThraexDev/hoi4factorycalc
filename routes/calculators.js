@@ -62,7 +62,7 @@ router.post('/divisionamount', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var assignedFactories = calculateDivisionsFromAmount(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
+    var assignedFactories = calculateFactoriesFromTemplates(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=Math.round(assignedFactories[i].amountOfEquipment);
@@ -78,7 +78,7 @@ router.post('/divisionfactories', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var factoryInfo = calculateDivisionsFromAmount(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,checkedData.outputPer,checkedData.level);
+    var factoryInfo = calculateFactoriesFromTemplates(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,checkedData.outputPer,checkedData.level);
     var assignedFactories = factoryInfo.assignedFactories;
     var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000);
     for(var i = 0; i < assignedFactories.length; i++){
@@ -93,22 +93,20 @@ router.post('/divisionfactories', function (req, res, next) {
     res.status(200).send(sendObject);
 });
 
-function calculateDivisionsFromAmount(divisions, factoryEfficiency, productionEfficiency, productionEfficiencyCap, amountOfDivisions, outputPer, level) {
+function calculateFactoriesFromTemplates(divisions, factoryEfficiency, productionEfficiency, productionEfficiencyCap, amountOfDivisions, outputPer, level) {
     var actualCost ={};
     for(var division of divisions){
         for(var battalion of division.battalions){
-            for(var unit of battalion){
-                if(unit != "+"){
-                    for(equipmentItem of unitCost[unit.replace(/\s/g,'')]) {
-                        if(actualCost[equipmentItem.name]){
-                            actualCost[equipmentItem.name].amount=actualCost[equipmentItem.name].amount+(equipmentItem.amount*(division.percent/100));
-                        }
-                        else {
-                            actualCost[equipmentItem.name]={
-                                name:equipmentItem.name,
-                                amount: equipmentItem.amount*(division.percent/100)
-                            };
-                        }
+            for(var unit of battalion.units){
+                for(equipmentItem of unitCost[unit.replace(/\s/g,'')]) {
+                    if(actualCost[equipmentItem.name]){
+                        actualCost[equipmentItem.name].amount=actualCost[equipmentItem.name].amount+(equipmentItem.amount*(division.percent/100));
+                    }
+                    else {
+                        actualCost[equipmentItem.name]={
+                            name:equipmentItem.name,
+                            amount: equipmentItem.amount*(division.percent/100)
+                        };
                     }
                 }
             }

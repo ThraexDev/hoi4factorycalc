@@ -1,3 +1,4 @@
+var divisionTemplates = [];
 var empty={"battalions":[["+","+","+","+","+","+"],["+","+","+","+","+","+"],["+","+","+","+","+","+"],["+","+","+","+","+","+"],["+","+","+","+","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30}
 var inf20w={"battalions":[["Engineers","Infantry","Infantry","Infantry","+","+"],["Support Artillery\n                    ","Infantry","Infantry","Artillery","+","+"],["Recon Company\n                    ","Infantry","Infantry","Artillery","+","+"],["+","+","+","+","+","+"],["+","+","+","+","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
 var inf40w={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","+"],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","+"],["Recon Company\n                    ","Infantry","Infantry","Infantry","Infantry","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"60","productionEfficiency":"70","amountOfDivisions":"1","outputPer":30};
@@ -6,7 +7,7 @@ var t40={"battalions":[["Recon Company\n                    ","Medium Tank\n    
 var spacemarines={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Heavy TD"],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","+"],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30};
 var inf40wat={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30,"amountOfFactories":"5"};
 var factoriesgiven=false;
-var divisionNumbers = [];
+let idTemplate = 0;
 sendCalcRequest= function () {
     var outputperField = document.getElementById("outputper");
     var sendObject = {
@@ -38,22 +39,12 @@ sendCalcRequest= function () {
             "Heavy SP Anti Air":$("#haal").val()
         }
     };
-    for(var divisionNumber of divisionNumbers){
-        var divisionTable = document.getElementById("divisionTable"+divisionNumber);
-        if (divisionTable != null) {
-            var division = {
-                battalions:[],
-                percent:document.getElementById("percent"+divisionNumber).value
-            };
-            for (var i = 1; i < divisionTable.rows.length; i++) {
-                var unitList = [];
-                for (var j = 0; j < divisionTable.rows[i].cells.length; j++){
-                    unitList.push(divisionTable.rows[i].cells[j].innerHTML.toString());
-                }
-                division.battalions.push(unitList);
-            }
-            sendObject.divisions.push(division);
-        }
+    for(let divisionTemplate of divisionTemplates){
+        var division = {
+            battalions:divisionTemplate.battalions,
+            percent:document.getElementById("percent"+divisionTemplate.id).value
+        };
+        sendObject.divisions.push(division);
     }
     if(factoriesgiven){
         $.ajax({url: "/calculator/divisionfactories",contentType: 'application/json', type: 'POST', data: JSON.stringify(sendObject), dataType: 'json',
@@ -122,51 +113,16 @@ sendCalcRequest= function () {
     window.scrollTo(0,document.body.scrollHeight);
 };
 
-var setOnClickTable = function (id, callback, parameter, header, firstColumnSupport, callbackSupport) {
-    var table = document.getElementById(id);
-    var startRow = 0;
-    if(header) startRow = 1;
-    if (table != null) {
-        for (var i = startRow; i < table.rows.length; i++) {
-            for (var j = 0; j < table.rows[i].cells.length; j++)
-                if(j==0){
-                    if(firstColumnSupport){
-                        table.rows[i].cells[j].onclick = function () {
-                            parameter.push(this);
-                            callbackSupport(parameter,id);
-                        };
-                    }
-                    else{
-                        table.rows[i].cells[j].onclick = function () {
-                            parameter.push(this);
-                            callback(parameter,id);
-                        };
-                    }
-                }
-                else {
-                    table.rows[i].cells[j].onclick = function () {
-                        parameter.push(this);
-                        callback(parameter,id);
-                    };
-                }
-        }
-    }
-};
-
-var makeDivisionDesigner = function () {
-    var id = 1;
-    if(divisionNumbers.length>0){
-        id = Math.max(...divisionNumbers)+1;
-    }
-    divisionNumbers.push(parseInt(id));
-    var divisionDesigner = "<div id=\"divisionTemplate"+id+"\">\n" +
-        "   <h3 class=\"content-subhead\">"+id+". Division template</h3>\n" +
+let makeDivisionDesigner = function () {
+    idTemplate++;
+    let divisionDesigner = "<div id=\"divisionTemplate"+idTemplate+"\">\n" +
+        "   <h3 class=\"content-subhead\">"+idTemplate+". Division template</h3>\n" +
         "   <form class=\"pure-form pure-form-aligned\">\n" +
         "      <fieldset>\n" +
-        "         <div class=\"pure-control-group\"><label>Click here to remove the division template</label><button type=\"button\" onclick=\"removeDivision("+id+")\" class=\"pure-button\">Remove</button></div>\n" +
+        "         <div class=\"pure-control-group\"><label>Click here to remove the division template</label><button type=\"button\" onclick=\"removeDivision("+idTemplate+")\" class=\"pure-button\">Remove</button></div>\n" +
         "         <div class=\"pure-control-group\">\n" +
-        "            <label for=\"template"+id+"\">(Optional) You can select a premade division blueprint</label>\n" +
-        "            <select id=\"template"+id+"\" onchange=\"setTemplate("+id+")\">\n" +
+        "            <label for=\"template"+idTemplate+"\">(Optional) You can select a premade division blueprint</label>\n" +
+        "            <select id=\"template"+idTemplate+"\" onchange=\"setTemplate("+idTemplate+")\">\n" +
         "               <option value=\"empty\">Empty</option>\n" +
         "               <option value=\"20i\">20 Width Infantry</option>\n" +
         "               <option value=\"40i\">40 Width Infantry</option>\n" +
@@ -176,254 +132,291 @@ var makeDivisionDesigner = function () {
         "               <option value=\"spacemarines\">Space Marines</option>\n" +
         "            </select>\n" +
         "         </div>\n" +
-        "         <div class=\"pure-control-group\"><label for=\"percent"+id+"\">% of divisions that will be recruited with this template</label><input id=\"percent"+id+"\" type=\"number\" min=\"0\" max=\"100\" step=\"1\" value=\"100\"><span class=\"pure-form-message-inline\">%</span></div>\n" +
+        "         <div class=\"pure-control-group\"><label for=\"percent"+idTemplate+"\">% of divisions that will be recruited with this template</label><input id=\"percent"+idTemplate+"\" type=\"number\" min=\"0\" max=\"100\" step=\"1\" value=\"100\"><span class=\"pure-form-message-inline\">%</span></div>\n" +
         "      </fieldset>\n" +
         "   </form>\n" +
         "   <strong>You can edit the table by clicking on the cells - use it like the division designer in the game.</strong>\n" +
-        "   <div id=\"placeholder"+id+"\" style=\"position: relative; margin-bottom: 10px\"></div>\n" +
-        "   <table id=\"divisionTable"+id+"\" class=\"pure-table pure-table-bordered\">\n" +
+        "   <div id=\"placeholder"+idTemplate+"\" style=\"position: relative; margin-bottom: 10px\"></div>" +
+        "   <div id=\"divisionDesigner"+idTemplate+"\"> </div>"+
+        "</div>";
+    $("#divisionTemplates").append(divisionDesigner);
+    let divisionTemplate = {
+        id: idTemplate,
+        table: $("#divisionTable"+idTemplate),
+        battalions: [{type:"support",
+                        units:[]}]
+    };
+    drawDivisionTemplate(divisionTemplate);
+    divisionTemplates.push(divisionTemplate);
+};
+let handleDivisionDesignerClick = function (row, column, divisionTemplate) {
+    return function () {
+        if(column > 0 && row==0 && !divisionTemplate.battalions[column]){
+            drawTypeTable(row, column, divisionTemplate);
+        }
+        else if (column > 0){
+            drawUnitTable(row, column, divisionTemplate);
+        }
+        if(column == 0){
+            drawSupportTable(row,column, divisionTemplate);
+        }
+    };
+};
+let drawDivisionTemplate = function (divisionTemplate) {
+    var tableBody = "";
+    for(let row = 0; row < 5; row++){
+        tableBody+="<tr>";
+        for(let column=0; column < 6; column++){
+            if(divisionTemplate.battalions[column]){
+                if(divisionTemplate.battalions[column].units[row]){
+                    tableBody+="<td class='clickable'><img src=\"pictures/"+divisionTemplate.battalions[column].units[row]+".png\" alt=\""+divisionTemplate.battalions[column].units[row]+"\"></td>"
+                } else if (divisionTemplate.battalions[column].units[row-1] || row < 1){
+                    tableBody+="<td class='clickable'><img src=\"pictures/plus.png\" alt=\"add\"\"></td>"
+                } else{
+                    tableBody+="<td><img src=\"pictures/lock.png\" alt=\"locked\"></td>"
+                }
+            } else {
+                if(divisionTemplate.battalions[column-1] && row == 0 || (row < 1 && column < 2)){
+                    tableBody+="<td class='clickable'><img src=\"pictures/plus.png\" alt=\"add\"></td>"
+                } else{
+                    tableBody+="<td><img src=\"pictures/lock.png\" alt=\"locked\"></td>"
+                }
+            }
+        }
+        tableBody+="</tr>";
+    }
+    let divisionDesigner =  "   <table id=\"divisionTable"+divisionTemplate.id+"\" class=\"pure-table\">\n" +
         "      <thead>\n" +
         "         <tr>\n" +
         "            <th>Support</th>\n" +
-        "            <th>Battalion</th>\n" +
-        "            <th>Battalion</th>\n" +
-        "            <th>Battalion</th>\n" +
-        "            <th>Battalion</th>\n" +
-        "            <th>Battalion</th>\n" +
+        "            <th colspan=\"5\" style='text-align: center;'>Combat</th>\n" +
         "         </tr>\n" +
         "      </thead>\n" +
         "      <tbody>\n" +
-        "         <tr>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "         </tr>\n" +
-        "         <tr>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "         </tr>\n" +
-        "         <tr>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "         </tr>\n" +
-        "         <tr>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "         </tr>\n" +
-        "         <tr>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "            <td>+</td>\n" +
-        "         </tr>\n" +
+        tableBody+
         "      </tbody>\n" +
-        "   </table>\n" +
-        "</div>";
-    $("#divisionTemplates").append(divisionDesigner);
-    setOnClickTable("divisionTable"+id, makeTypeTable, [], true, true, makeSupportTable);
-}
+        "   </table>\n" ;
+    $("#divisionDesigner"+divisionTemplate.id).html(divisionDesigner);
+    var table = document.getElementById("divisionTable"+divisionTemplate.id);
+    for (var i = 1; i < table.rows.length; i++) {
+        for (var j = 0; j < table.rows[i].cells.length; j++){
+            if(table.rows[i].cells[j].classList.contains("clickable")){
+                table.rows[i].cells[j].onclick = handleDivisionDesignerClick(i-1,j,divisionTemplate);
+            }
+        }
+    }
+    for(let i = 0; i < divisionTemplates.length; i++){
+        if(divisionTemplates[i].id == divisionTemplate.id){
+            divisionTemplates[i] = divisionTemplate;
+        }
+    }
+};
 
-var removeDivision = function (id) {
-    $("#divisionTemplate"+id).remove();
-    divisionNumbers.splice(divisionNumbers.indexOf(id), 1);
-}
-
-var makeTypeTable = function (tableCells,id) {
-    var newTableCell = [];
-    var idNumber = id.replace("divisionTable","");
-    newTableCell.push(tableCells[tableCells.length-1]);
-    var unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"typeTable"+idNumber+"\">\n" +
+let drawTypeTable = function (row, column, divisionTemplate){
+    let unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"typeTable"+divisionTemplate.id+"\">\n" +
         "                <tbody>\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Infantry Battalion</td>\n" +
-        "                    <td class='add'>Mobile Battalion</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Infantry.png\" alt=\"Infantry\"></br>Infantry Battalion</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Motorized Infantry.png\" alt=\"Motorized\"></br>Mobile Battalion</td>\n" +
         "                </tr>\n" +
         "\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Armored Battalion</td>\n" +
-        "                    <td class='remove'>Remove</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Medium Tank.png\" alt=\"Medium Tank\"></br>Armored Battalion</td>\n" +
+        "                    <td class='remove'></td>\n" +
         "                </tr>\n" +
         "                </tbody>\n" +
         "            </table>";
-    document.getElementById('placeholder'+idNumber).innerHTML = unitTable;
-    setOnClickTable("typeTable"+idNumber, makeUnitTable, newTableCell)
+    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = unitTable;
+    var table = document.getElementById("typeTable"+divisionTemplate.id);
+    for (var i = 0; i < table.rows.length; i++) {
+        for (var j = 0; j < table.rows[i].cells.length; j++){
+            if(table.rows[i].cells[j].classList.contains("clickable")){
+                table.rows[i].cells[j].onclick = function () {
+                    divisionTemplate.battalions[column]={
+                        type:this.textContent,
+                        units:[]
+                    };
+                    drawUnitTable(row, column, divisionTemplate);
+                }
+            }
+        }
+    }
 };
 
-var makeSupportTable = function (tableCells, id) {
-    var newTableCell = [];
-    var idNumber = id.replace("divisionTable","");
-    newTableCell.push(tableCells[tableCells.length-1]);
-    var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"supportTable"+idNumber+"\">\n" +
+var drawSupportTable = function (row, column, divisionTemplate) {
+    let myTable = "<table class=\"pure-table pure-table-bordered\" id=\"supportTable"+divisionTemplate.id+"\">\n" +
         "                <tbody>\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Engineers</td>\n" +
-        "                    <td class='add'>Field Hospital</td>\n" +
-        "                    <td class='add'>Support Rocket Artillery</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Engineers.png\" alt=\"Engineers\">Engineers</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Field Hospital.png\" alt=\"Field Hospital\">Field Hospital</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Support Rocket Artillery.png\" alt=\"Support Rocket Artillery\">Support Rocket Artillery</td>\n" +
         "                </tr>\n" +
         "\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Military Police</tdclass>\n" +
-        "                    <td class='add'>Logistic Company</td>\n" +
-        "                    <td class='add'>Signal Company</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Military Police.png\" alt=\"Military Police\">Military Police</tdclass>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Logistic Company.png\" alt=\"Logistic Company\">Logistic Company</td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Signal Company.png\" alt=\"Signal Company\">Signal Company</td>\n" +
         "                </tr>\n" +
         "\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Recon Company</tdclass>\n" +
-        "                    <td class='add'>Maintenance Company</td>\n" +
-        "                    <td class='add'></td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Recon Company.png\" alt=\"Recon Company\">Recon Company</tdclass>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Maintenance Company.png\" alt=\"Maintenance Company\">Maintenance Company</td>\n" +
+        "                    <td></td>\n" +
         "                </tr>\n" +
         "\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Support Artillery</tdclass>\n" +
-        "                    <td class='add'>Support Anti Tank</td>\n" +
-        "                    <td class='add'></td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Support Artillery.png\" alt=\"Support Artillery\">Support Artillery</tdclass>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Support Anti Tank.png\" alt=\"Support Anti Tank\">Support Anti Tank</td>\n" +
+        "                    <td></td>\n" +
         "                </tr>\n" +
         "\n" +
         "                <tr>\n" +
-        "                    <td class='add'>Support Anti Air</td>\n" +
-        "                    <td class='remove'>Remove</td>\n" +
-        "                    <td class='add'></td>\n" +
+        "                    <td class='clickable'><img src=\"pictures/Support Anti Air.png\" alt=\"Support Anti Air\">Support Anti Air</td>\n" +
+        "                    <td class='delete'><img src=\"pictures/Delete.png\" alt=\"Delete\">Remove</td>\n" +
+        "                    <td></td>\n" +
         "                </tr>\n" +
         "                </tbody>\n" +
         "            </table>";
-    document.getElementById('placeholder'+idNumber).innerHTML = myTable;
-    setOnClickTable("supportTable"+idNumber, selectUnit, newTableCell);
+    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = myTable;
+    var table = document.getElementById("supportTable"+divisionTemplate.id);
+    for (var i = 0; i < table.rows.length; i++) {
+        for (var j = 0; j < table.rows[i].cells.length; j++){
+            if(table.rows[i].cells[j].classList.contains("clickable")){
+                table.rows[i].cells[j].onclick = function () {
+                    divisionTemplate.battalions[column].units[row]=this.getElementsByTagName("img")[0].alt;
+                    drawDivisionTemplate(divisionTemplate);
+                    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = "";
+                }
+            }
+            if(table.rows[i].cells[j].classList.contains("delete")){
+                table.rows[i].cells[j].onclick = function () {
+                    divisionTemplate.battalions[column].units.splice(row,1);
+                    drawDivisionTemplate(divisionTemplate);
+                    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = "";
+                }
+            }
+        }
+    }
 };
 
-var makeUnitTable = function (tableCells, id) {
-    var idNumber = id.replace("typeTable","");
-    if(tableCells[tableCells.length-1].innerHTML.toString()=="Infantry Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"infanteryTable"+idNumber+"\">\n" +
+var drawUnitTable = function (row, column, divisionTemplate) {
+    let unitTable = "";
+    if(divisionTemplate.battalions[column].type=="Infantry Battalion"){
+        unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"unitTable"+divisionTemplate.id+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Infantry</td>\n" +
-            "                    <td class='add'>Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Infantry.png\" alt=\"Infantry\">Infantry</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Artillery.png\" alt=\"Artillery\">Artillery</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Anti Tank</tdclass>\n" +
-            "                    <td class='add'>Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Anti Tank.png\" alt=\"Anti Tank\">Anti Tank</tdclass>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Anti Air.png\" alt=\"Anti Air\">Anti Air</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Mountaineer</td>\n" +
-            "                    <td class='add'>Marines</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Mountaineer.png\" alt=\"Mountaineer\">Mountaineer</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Marines.png\" alt=\"Marines\">Marines</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Paratrooper</td>\n" +
-            "                    <td class='add'>Rocket Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Paratrooper.png\" alt=\"Paratrooper\">Paratrooper</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Rocket Artillery.png\" alt=\"Rocket Artillery\">Rocket Artillery</td>\n" +
+            "                    <td class='delete'><img src=\"pictures/Delete.png\" alt=\"Delete\">Remove</td>\n" +
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
-        setOnClickTable("infanteryTable"+idNumber, selectUnit, tableCells);
     };
-    if(tableCells[tableCells.length-1].innerHTML.toString()=="Mobile Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"mobileTable"+idNumber+"\">\n" +
+    if(divisionTemplate.battalions[column].type=="Mobile Battalion"){
+        unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"unitTable"+divisionTemplate.id+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Cavalry</td>\n" +
-            "                    <td class='add'>Motorized Infantry</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Cavalry.png\" alt=\"Cavalry\">Cavalry</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Motorized Infantry.png\" alt=\"Motorized Infantry\">Motorized Infantry</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Mechanized Infantry</tdclass>\n" +
-            "                    <td class='add'>Motorized Rocket Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Mechanized Infantry.png\" alt=\"Mechanized Infantry\">Mechanized Infantry</tdclass>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Motorized Rocket Artillery.png\" alt=\"Motorized Rocket Artillery\">Motorized Rocket Artillery</td>\n" +
+            "                    <td class='delete'><img src=\"pictures/Delete.png\" alt=\"Delete\">Remove</td>\n" +
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
-        setOnClickTable("mobileTable"+idNumber, selectUnit, tableCells);
     };
-    if(tableCells[tableCells.length-1].innerHTML.toString()=="Armored Battalion"){
-        var myTable = "<table class=\"pure-table pure-table-bordered\" id=\"armoredTable"+idNumber+"\">\n" +
+    if(divisionTemplate.battalions[column].type=="Armored Battalion"){
+        unitTable = "<table class=\"pure-table pure-table-bordered\" id=\"unitTable"+divisionTemplate.id+"\">\n" +
             "                <tbody>\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Light Tank</td>\n" +
-            "                    <td class='add'>Light TD</td>\n" +
-            "                    <td class='add'>Light SP Artillery</td>\n" +
-            "                    <td class='add'>Light SP Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Light Tank.png\" alt=\"Light Tank\">Light Tank</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Light TD.png\" alt=\"Light TD\">Light TD</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Light SP Artillery.png\" alt=\"Light SP Artillery\">Light SP Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Light SP Anti Air.png\" alt=\"Light SP Anti Air\">Light SP Anti Air</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Medium Tank</tdclass>\n" +
-            "                    <td class='add'>Medium TD</td>\n" +
-            "                    <td class='add'>Medium SP Artillery</td>\n" +
-            "                    <td class='add'>Medium SP Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Medium Tank.png\" alt=\"Medium Tank\">Medium Tank</tdclass>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Medium TD.png\" alt=\"Medium TD\">Medium TD</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Medium SP Artillery.png\" alt=\"Medium SP Artillery\">Medium SP Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Medium SP Anti Air.png\" alt=\"Medium SP Anti Air\">Medium SP Anti Air</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Heavy Tank</td>\n" +
-            "                    <td class='add'>Heavy TD</td>\n" +
-            "                    <td class='add'>Heavy SP Artillery</td>\n" +
-            "                    <td class='add'>Heavy SP Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Heavy Tank.png\" alt=\"Heavy Tank\">Heavy Tank</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Heavy TD.png\" alt=\"Heavy TD\">Heavy TD</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Heavy SP Artillery.png\" alt=\"Heavy SP Artillery\">Heavy SP Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Heavy SP Anti Air.png\" alt=\"Heavy SP Anti Air\">Heavy SP Anti Air</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Super Heavy Tank</td>\n" +
-            "                    <td class='add'>Super Heavy TD</td>\n" +
-            "                    <td class='add'>Super Heavy SP Artillery</td>\n" +
-            "                    <td class='add'>Super Heavy SP Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Super Heavy Tank.png\" alt=\"Super Heavy Tank\">Super Heavy Tank</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Super Heavy TD.png\" alt=\"Super Heavy TD\">Super Heavy TD</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Super Heavy SP Artillery.png\" alt=\"Super Heavy SP Artillery\">Super Heavy SP Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Super Heavy SP Anti Air.png\" alt=\"Super Heavy SP Anti Air\">Super Heavy SP Anti Air</td>\n" +
+            "                    <td></td>\n" +
             "                </tr>\n" +
             "\n" +
             "                <tr>\n" +
-            "                    <td class='add'>Modern Tank</td>\n" +
-            "                    <td class='add'>Modern TD</td>\n" +
-            "                    <td class='add'>Modern SP Artillery</td>\n" +
-            "                    <td class='add'>Modern SP Anti Air</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Modern Tank.png\" alt=\"Modern Tank\">Modern Tank</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Modern TD.png\" alt=\"Modern TD\">Modern TD</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Modern SP Artillery.png\" alt=\"Modern SP Artillery\">Modern SP Artillery</td>\n" +
+            "                    <td class='clickable'><img src=\"pictures/Modern SP Anti Air.png\" alt=\"Modern SP Anti Air\">Modern SP Anti Air</td>\n" +
+            "                    <td class='delete'><img src=\"pictures/Delete.png\" alt=\"Delete\">Remove</td>\n" +
             "                </tr>\n" +
             "                </tbody>\n" +
             "            </table>";
-        document.getElementById('placeholder'+idNumber).innerHTML = myTable;
-        setOnClickTable("armoredTable"+idNumber, selectUnit, tableCells);
     };
-    if(tableCells[tableCells.length-1].innerHTML.toString()=="Remove"){
-        tableCells[0].innerHTML="+";
-        document.getElementById('placeholder'+idNumber).innerHTML = "";
-    };
-};
-
-
-
-var selectUnit = function (tableCells,id) {
-    var idNumber;
-    if(id.startsWith("supportTable")){
-        idNumber=id.replace("supportTable","");
+    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = unitTable;
+    var table = document.getElementById("unitTable"+divisionTemplate.id);
+    for (var i = 0; i < table.rows.length; i++) {
+        for (var j = 0; j < table.rows[i].cells.length; j++){
+            if(table.rows[i].cells[j].classList.contains("clickable")){
+                table.rows[i].cells[j].onclick = function () {
+                    divisionTemplate.battalions[column].units[row]=this.getElementsByTagName("img")[0].alt;
+                    drawDivisionTemplate(divisionTemplate);
+                    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = "";
+                }
+            }
+            if(table.rows[i].cells[j].classList.contains("delete")){
+                table.rows[i].cells[j].onclick = function () {
+                    if(divisionTemplate.battalions[column].units.length == 1){
+                        divisionTemplate.battalions.splice(column,1);
+                    }
+                    else{
+                        divisionTemplate.battalions[column].units.splice(row,1);
+                    }
+                    drawDivisionTemplate(divisionTemplate);
+                    document.getElementById('placeholder'+divisionTemplate.id).innerHTML = "";
+                }
+            }
+        }
     }
-    if(id.startsWith("infanteryTable")){
-        idNumber=id.replace("infanteryTable","");
-    }
-    if(id.startsWith("mobileTable")){
-        idNumber=id.replace("mobileTable","");
-    }
-    if(id.startsWith("armoredTable")){
-        idNumber=id.replace("armoredTable","");
-    }
-    if(tableCells[tableCells.length-1].innerHTML.toString()=="Remove"){
-        tableCells[0].innerHTML="+";
-    }
-    else {
-        tableCells[0].innerHTML=tableCells[tableCells.length-1].innerHTML;
-    }
-    document.getElementById('placeholder'+idNumber).innerHTML = "";
 };
 
 var enableAOF = function () {
@@ -476,6 +469,11 @@ var templateToTable= function (template, id) {
             table.rows[i+1].cells[j].innerHTML=battalions[i][j];
         }
     }
+};
+
+var removeDivision = function (id) {
+    $("#divisionTemplate"+id).remove();
+    divisionTemplates.splice(divisionNumbers.indexOf(id), 1);
 };
 
 makeDivisionDesigner();
