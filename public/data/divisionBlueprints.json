@@ -1,0 +1,26 @@
+[
+    {
+        "name":"20i",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Support Artillery","Field Hospital"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Artillery","Artillery"]}]
+    },
+    {
+        "name":"40i",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Support Artillery","Field Hospital"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Artillery","Artillery","Artillery","Artillery"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry"]}]
+    },
+    {
+        "name":"40iat",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Support Artillery","Field Hospital"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Infantry","Infantry","Infantry"]},{"type":"Infantry Battalion","units":["Infantry","Artillery","Artillery","Artillery","Artillery"]},{"type":"Infantry Battalion","units":["Infantry","Infantry","Anti Tank","Anti Tank"]}]
+    },
+    {
+        "name":"20t",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Maintenance Company","Logistic Company","Support Artillery"]},{"type":"Armored Battalion","units":["Medium Tank","Medium Tank","Medium Tank","Medium Tank","Medium Tank"]},{"type":"Armored Battalion","units":["Medium SP Artillery","Medium SP Artillery"]},{"type":"Mobile Battalion","units":["Motorized Infantry","Motorized Infantry"]}]
+    },
+    {
+        "name":"40t",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Maintenance Company","Logistic Company","Support Artillery"]},{"type":"Armored Battalion","units":["Medium Tank","Medium Tank","Medium Tank","Medium Tank","Medium Tank"]},{"type":"Armored Battalion","units":["Medium SP Artillery","Medium SP Artillery","Medium SP Artillery","Medium SP Artillery"]},{"type":"Mobile Battalion","units":["Motorized Infantry","Motorized Infantry","Motorized Infantry","Motorized Infantry"]},{"type":"Armored Battalion","units":["Medium Tank","Medium Tank","Medium Tank","Medium Tank","Medium Tank"]}]
+    },
+    {
+        "name":"spacemarines",
+        "battalions":[{"type":"support","units":["Engineers","Recon Company","Support Artillery","Field Hospital"]},{"type":"Infantry Battalion","units":["Marines","Marines","Marines","Marines","Marines"]},{"type":"Infantry Battalion","units":["Marines","Marines","Marines","Marines","Marines"]},{"type":"Infantry Battalion","units":["Marines","Artillery","Artillery","Artillery","Artillery"]},{"type":"Infantry Battalion","units":["Marines","Marines"]},{"type":"Armored Battalion","units":["Heavy TD"]}]
+    }
+]

@@ -8,6 +8,7 @@ var spacemarines={"battalions":[["Engineers","Infantry","Infantry","Infantry","I
 var inf40wat={"battalions":[["Engineers","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Support Artillery\n                    ","Infantry","Infantry","Infantry","Infantry","Anti Tank\n                    "],["Recon Company\n                    ","Infantry","Infantry","Infantry","+","+"],["+","Infantry","Artillery","Artillery","+","+"],["+","Infantry","Artillery","Artillery","+","+"]],"factoryEfficiency":"0","productionEfficiency":"50","amountOfDivisions":"1","outputPer":30,"amountOfFactories":"5"};
 var factoriesgiven=false;
 let idTemplate = 0;
+let divisionBlueprints;
 sendCalcRequest= function () {
     var outputperField = document.getElementById("outputper");
     var sendObject = {
@@ -123,7 +124,7 @@ let makeDivisionDesigner = function () {
         "         <div class=\"pure-control-group\">\n" +
         "            <label for=\"template"+idTemplate+"\">(Optional) You can select a premade division blueprint</label>\n" +
         "            <select id=\"template"+idTemplate+"\" onchange=\"setTemplate("+idTemplate+")\">\n" +
-        "               <option value=\"empty\">Empty</option>\n" +
+        "               <option value=\"empty\">Not set</option>\n" +
         "               <option value=\"20i\">20 Width Infantry</option>\n" +
         "               <option value=\"40i\">40 Width Infantry</option>\n" +
         "               <option value=\"40iat\">40 Width Infantry With Anti Tank</option>\n" +
@@ -438,42 +439,26 @@ var enableAOD = function () {
 var setTemplate = function (id) {
     var templateSelect = document.getElementById("template"+id);
     var templateID = templateSelect.options[templateSelect.selectedIndex].value;
-    if(templateID=="empty"){
-        templateToTable(empty,id);
-    }
-    if(templateID=="20i"){
-        templateToTable(inf20w,id);
-    }
-    if(templateID=="40i"){
-        templateToTable(inf40w,id);
-    }
-    if(templateID=="40iat"){
-        templateToTable(inf40wat,id);
-    }
-    if(templateID=="20t"){
-        templateToTable(t20,id);
-    }
-    if(templateID=="40t"){
-        templateToTable(t40,id);
-    }
-    if(templateID=="spacemarines"){
-        templateToTable(spacemarines,id);
-    }
-};
-
-var templateToTable= function (template, id) {
-    var battalions = template.battalions;
-    var table = document.getElementById('divisionTable'+id);
-    for(var i = 0; i < battalions.length; i++){
-        for(var j = 0; j < battalions[i].length;j++){
-            table.rows[i+1].cells[j].innerHTML=battalions[i][j];
+    for(blueprint of divisionBlueprints){
+        if(blueprint.name == templateID){
+            let divisionTemplate = {id:id,
+            battalions:blueprint.battalions};
+            drawDivisionTemplate(divisionTemplate);
         }
     }
 };
 
 var removeDivision = function (id) {
     $("#divisionTemplate"+id).remove();
-    divisionTemplates.splice(divisionNumbers.indexOf(id), 1);
+    for(let i = 0; i < divisionTemplates.length; i++){
+        if(divisionTemplates[i].id == id){
+            divisionTemplates.splice(i, 1);
+        }
+    }
 };
+
+$.getJSON( "data/divisionBlueprints.json", function( data ) {
+    divisionBlueprints = data;
+});
 
 makeDivisionDesigner();
