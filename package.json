@@ -16,6 +16,8 @@
     "html": "^1.0.0",
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "universal-analytics": "^0.4.17",
+    "uuid": "^3.3.2"
   }
 }

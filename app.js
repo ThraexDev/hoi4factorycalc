@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var uuidv4 = require('uuid/v4');
+var ua = require("universal-analytics");
 var pages = require('./routes/pages');
 var calculators = require('./routes/calculators');
 
@@ -18,6 +20,19 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// set a cookie (fc)
+app.use(function (req, res, next) {
+    // check if client sent cookie
+    var cookie = req.cookies.fc;
+    if (cookie === undefined)
+    {
+        // no: set a new cookie
+        cookie = uuidv4()
+        res.cookie('fc',cookie);
+    }
+    req.visitor = ua('UA-114749288-1', cookie);
+    next(); // <-- important!
+});
 app.use('/', pages);
 app.use('/calculator', calculators);
 

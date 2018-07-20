@@ -1,6 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+router.use(function (req, res, next) {
+    if (req.method == "GET") {
+        req.visitor.pageview(req.originalUrl).send();
+    }
+    next(); // <-- important!
+});
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('home');
