@@ -60,21 +60,35 @@ sendCalcRequest= function () {
                         "<th>Equipment Type</th>"+
                         "<th>Number of Factories to assign</th>"+
                         "<th>Percent of Factories</th>"+
+                        "<th>Resources used for Equipment Type</th>"+
                         "</tr>"+
                         "</thead>"+
                         "                <tbody>\n");
                     if(Array.isArray(data.assignedFactories)){
-                        for(factory of data.assignedFactories){
+                        for(var factory of data.assignedFactories){
+                            var eqRes = "";
+                            for(var res in factory.requiredResources){
+                                if (factory.requiredResources.hasOwnProperty(res)){
+                                    eqRes = eqRes.concat(factory.requiredResources[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                                }
+                            }
                             var insertData = "                <tr>\n" +
                                 "                    <td>"+factory.name+"</td>\n" +
                                 "                    <td>"+factory.amountOfFactories+"</td>\n" +
                                 "                    <td>"+factory.percent+"%</td>\n" +
+                                "                    <td>"+eqRes+"</td>\n" +
                                 "                </tr>\n";
                             resultTable = resultTable.concat(insertData);
                         }
                     }
                     resultTable = resultTable.concat("                </tbody>\n" +
                         "            </table>");
+                    resultTable = resultTable.concat("Total amount of resources needed: ");
+                    for(var res in data.requiredResourcesTotal){
+                        if (data.requiredResourcesTotal.hasOwnProperty(res)){
+                            resultTable = resultTable.concat(data.requiredResourcesTotal[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                        }
+                    }
                     document.getElementById('result').innerHTML = resultTable;
                 }
             }});
@@ -90,22 +104,37 @@ sendCalcRequest= function () {
                         "<th>Number of Factories needed</th>"+
                         "<th>Percent of Factories</th>"+
                         "<th>Total Amount of Equipment needed in "+document.getElementById("time").value+" "+outputperField.options[outputperField.selectedIndex].innerHTML+"</th>"+
+                        "<th>Resources used for Equipment Type</th>"+
                         "</tr>"+
                         "</thead>"+
                         "                <tbody>\n"
-                    if(Array.isArray(data)){
-                        for(factory of data){
+                    if(Array.isArray(data.assignedFactories)){
+                        for(factory of data.assignedFactories){
+                            var eqRes = "";
+                            for(var res in factory.requiredResources){
+                                if (factory.requiredResources.hasOwnProperty(res)){
+                                    eqRes = eqRes.concat(factory.requiredResources[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                                }
+                            }
                             var insertData = "                <tr>\n" +
                                 "                    <td>"+factory.name+"</td>\n" +
                                 "                    <td>"+factory.amountOfFactories+"</td>\n" +
                                 "                    <td>"+factory.percent+"%</td>\n" +
                                 "                    <td>"+factory.amountOfEquipment+"</td>\n" +
+                                "                    <td>"+eqRes+"</td>\n" +
                                 "                </tr>\n";
                             resultTable = resultTable.concat(insertData);
                         }
                     }
                     resultTable = resultTable.concat("                </tbody>\n" +
                         "            </table>");
+                    resultTable = resultTable.concat("Total amount of Factories needed: "+data.totalFactories+"</br>\n"+
+                    "Total amount of resources needed: ");
+                    for(var res in data.requiredResourcesTotal){
+                        if (data.requiredResourcesTotal.hasOwnProperty(res)){
+                            resultTable = resultTable.concat(data.requiredResourcesTotal[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                        }
+                    }
                     document.getElementById('result').innerHTML = resultTable;
 
                 }

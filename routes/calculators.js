@@ -65,13 +65,16 @@ router.post('/divisionamount', function (req, res, next) {
         res.status(400).send(checkedData.errorMsg);
         return;
     }
-    var assignedFactories = calculateFactoriesFromTemplates(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level).assignedFactories;
+    var returnObject = calculateFactoriesFromTemplates(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap,checkedData.amountOfDivisions,checkedData.outputPer, checkedData.level);
+    var assignedFactories = returnObject.assignedFactories;
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=Math.round(assignedFactories[i].amountOfEquipment);
         assignedFactories[i].amountOfFactories=Math.ceil(assignedFactories[i].amountOfFactories);
     }
-    res.status(200).send(assignedFactories);
+    returnObject.assignedFactories = assignedFactories;
+    returnObject.totalFactories = Math.ceil(returnObject.totalFactories);
+    res.status(200).send(returnObject);
 });
 
 router.post('/divisionfactories', function (req, res, next) {
@@ -85,16 +88,32 @@ router.post('/divisionfactories', function (req, res, next) {
     var factoryInfo = calculateFactoriesFromTemplates(checkedData.divisions,checkedData.factoryEfficiency,checkedData.producationEfficiency, checkedData.producationEfficiencyCap ,1000000,checkedData.outputPer,checkedData.level);
     var assignedFactories = factoryInfo.assignedFactories;
     var divisionoutput = Math.round((checkedData.amountOfFactories / factoryInfo.totalFactories)*1000000);
+    var requiredResourcesTotal={};
     for(var i = 0; i < assignedFactories.length; i++){
         assignedFactories[i].amountOfFactories = Math.round((assignedFactories[i].percent*checkedData.amountOfFactories)/100)
         assignedFactories[i].percent=Math.round(assignedFactories[i].percent);
         assignedFactories[i].amountOfEquipment=0;
+        var requiredResources={};
+        if(checkedData.level[assignedFactories[i].name]){
+            requiredResources=equipmentCost[assignedFactories[i].name+" "+checkedData.level[assignedFactories[i].name]].res;
+        }
+        else {
+            requiredResources= equipmentCost[assignedFactories[i].name].res;
+        }
+        for(var resource of requiredResources) {
+            assignedFactories[i].requiredResources[resource.name] = resource.amount*Math.ceil(assignedFactories[i].amountOfFactories);
+            if(requiredResourcesTotal[resource.name]){
+                requiredResourcesTotal[resource.name] = requiredResourcesTotal[resource.name] + resource.amount*Math.ceil(assignedFactories[i].amountOfFactories);
+            }
+            else {
+                requiredResourcesTotal[resource.name] = resource.amount*Math.ceil(assignedFactories[i].amountOfFactories);
+            }
+        }
     }
-    var sendObject = {
-        assignedFactories:assignedFactories,
-        divisionoutput:divisionoutput
-    }
-    res.status(200).send(sendObject);
+    factoryInfo.assignedFactories = assignedFactories;
+    factoryInfo.divisionoutput= divisionoutput;
+    factoryInfo.requiredResourcesTotal=requiredResourcesTotal;
+    res.status(200).send(factoryInfo);
 });
 
 function calculateFactoriesFromTemplates(divisions, factoryEfficiency, productionEfficiency, productionEfficiencyCap, amountOfDivisions, outputPer, level) {
@@ -118,19 +137,33 @@ function calculateFactoriesFromTemplates(divisions, factoryEfficiency, productio
     }
     var assignedFactories = [];
     var totalFactories=0;
+    var requiredResourcesTotal={};
     for(var equipmentItem in actualCost){
         if (actualCost.hasOwnProperty(equipmentItem)) {
             var equipmentCostSingle = 0;
+            var requiredResources={};
             if(level[equipmentItem]){
-                equipmentCostSingle = equipmentCost[equipmentItem+" "+level[equipmentItem]];
+                equipmentCostSingle = equipmentCost[equipmentItem+" "+level[equipmentItem]].cost;
+                requiredResources=equipmentCost[equipmentItem+" "+level[equipmentItem]].res;
             }
             else {
-                equipmentCostSingle = equipmentCost[equipmentItem];
+                equipmentCostSingle = equipmentCost[equipmentItem].cost;
+                requiredResources= equipmentCost[equipmentItem].res;
             }
             var factoryObject = {
                 name: equipmentItem,
                 amountOfFactories: ((actualCost[equipmentItem].amount*equipmentCostSingle*amountOfDivisions)/(baseProduction * (getAveragePE(productionEfficiency, productionEfficiencyCap, outputPer)/100)*(factoryEfficiency/100)))/outputPer,
                 amountOfEquipment: actualCost[equipmentItem].amount*amountOfDivisions
+            }
+            factoryObject.requiredResources = {};
+            for(var resource of requiredResources) {
+                factoryObject.requiredResources[resource.name] = resource.amount*Math.ceil(factoryObject.amountOfFactories);
+                if(requiredResourcesTotal[resource.name]){
+                    requiredResourcesTotal[resource.name] = requiredResourcesTotal[resource.name] + resource.amount*Math.ceil(factoryObject.amountOfFactories);
+                }
+                else {
+                    requiredResourcesTotal[resource.name] = resource.amount*Math.ceil(factoryObject.amountOfFactories);
+                }
             }
             totalFactories=totalFactories+factoryObject.amountOfFactories;
             assignedFactories.push(factoryObject)
@@ -143,7 +176,8 @@ function calculateFactoriesFromTemplates(divisions, factoryEfficiency, productio
     }
     var returnObject = {
         assignedFactories:assignedFactories,
-        totalFactories:totalFactories
+        totalFactories:totalFactories,
+        requiredResourcesTotal: requiredResourcesTotal
     };
     return returnObject;
 };
