@@ -4,10 +4,46 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var request = require('request');
 var uuidv4 = require('uuid/v4');
-var ua = require("universal-analytics");
 var pages = require('./routes/pages');
 var calculators = require('./routes/calculators');
+var googleApi = function (cid, ip, useragent, referer) {
+    // Set the headers
+    var headers = {
+        'User-Agent':       'FactoryCalc',
+        'Content-Type':     'application/x-www-form-urlencoded'
+    }
+
+// Configure the request
+    var options = {
+        url: 'https://www.google-analytics.com/collect',
+        method: 'POST',
+        headers: headers,
+        form: {'v': '1', 'tid': 'UA-114749288-1','cid':cid,'uip':ip,'ua':useragent, 'dr': referer}
+    }
+    return {
+        pageView: function (page) {
+            options.form['t'] = 'pageview';
+            options.form['dl'] = page;
+            // Start the request
+            request(options, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                }
+            })
+        },
+        event:function (category, action) {
+            options.form['t'] = 'event';
+            options.form['ec'] = category;
+            options.form['ea'] = action;
+            // Start the request
+            request(options, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                }
+            })
+        }
+    };
+};
 
 var app = express();
 // view engine setup
@@ -28,9 +64,11 @@ app.use(function (req, res, next) {
     {
         // no: set a new cookie
         cookie = uuidv4()
-        res.cookie('fc',cookie);
+        let options = {
+            maxAge: 1000*3600*24*365*2} //expires after 2 years
+        res.cookie('fc',cookie, options);
     }
-    req.visitor = ua('UA-114749288-1', cookie);
+    req.visitor = googleApi(cookie, req.connection.remoteAddress, req.headers['user-agent'], req.headers['referer'])
     next(); // <-- important!
 });
 app.use('/', pages);
