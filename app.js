@@ -5,9 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var uuidv4 = require('uuid/v4');
-var ua = require("universal-analytics");
 var pages = require('./routes/pages');
 var calculators = require('./routes/calculators');
+var googleApi = require('./measurementApi');
 
 var app = express();
 // view engine setup
@@ -28,9 +28,11 @@ app.use(function (req, res, next) {
     {
         // no: set a new cookie
         cookie = uuidv4()
-        res.cookie('fc',cookie);
+        let options = {
+            maxAge: 1000*3600*24*365*2} //expires after 2 years
+        res.cookie('fc',cookie, options);
     }
-    req.visitor = ua('UA-114749288-1', cookie);
+    req.visitor = googleApi(cookie, req.connection.remoteAddress, req.headers['user-agent'], req.headers['referer'])
     next(); // <-- important!
 });
 app.use('/', pages);
