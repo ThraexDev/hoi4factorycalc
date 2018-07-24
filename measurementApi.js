@@ -1,6 +1,6 @@
 var request = require('request');
 
-module.exports=function (cid, ip, useragent, referer, country) {
+module.exports=function (cid, ip, useragent, referer) {
     // Set the headers
     var headers = {
         'User-Agent':       'FactoryCalc',
@@ -12,7 +12,7 @@ module.exports=function (cid, ip, useragent, referer, country) {
         url: 'https://www.google-analytics.com/collect',
         method: 'POST',
         headers: headers,
-        form: {'v': '1', 'tid': 'UA-114749288-1','cid':cid,'uip':ip,'ua':useragent, 'dr': referer, 'geoid':country}
+        form: {'v': '1', 'tid': 'UA-114749288-1','cid':cid,'uip':ip,'ua':useragent, 'dr': referer}
     }
     return {
         pageView: function (page) {

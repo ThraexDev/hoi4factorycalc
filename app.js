@@ -5,7 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var uuidv4 = require('uuid/v4');
-var requestCountry = require('request-country');
 var pages = require('./routes/pages');
 var calculators = require('./routes/calculators');
 var googleApi = require('./measurementApi');
@@ -33,7 +32,7 @@ app.use(function (req, res, next) {
             maxAge: 1000*3600*24*365*2} //expires after 2 years
         res.cookie('fc',cookie, options);
     }
-    req.visitor = googleApi(cookie, req.connection.remoteAddress, req.headers['user-agent'], req.headers['referer'],requestCountry(req))
+    req.visitor = googleApi(cookie, req.connection.remoteAddress, req.headers['user-agent'], req.headers['referer'])
     next(); // <-- important!
 });
 app.use('/', pages);

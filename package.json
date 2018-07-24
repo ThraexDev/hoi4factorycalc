@@ -17,7 +17,6 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "request": "^2.87.0",
-    "request-country": "^0.1.0",
     "serve-favicon": "~2.4.5",
     "uuid": "^3.3.2"
   }
