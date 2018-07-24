@@ -8,7 +8,7 @@ var baseProductionDockyards = 2.5;
 var router = express.Router();
 
 router.post('/airforceamount', function (req, res, next) {
-    req.visitor.event("Calculator", "Airforce");
+    req.visitor.event("Calculator", "Airforce").send();
     var sendObject = req.body;
     var planetypes = sendObject.planetypes;
     var outputper = parseInt(sendObject.outputPer);
@@ -41,7 +41,7 @@ router.post('/airforceamount', function (req, res, next) {
 });
 
 router.post('/navyamount', function (req, res, next) {
-    req.visitor.event("Calculator", "Navy");
+    req.visitor.event("Calculator", "Navy").send();
     var sendObject = req.body;
     var shiptypes = sendObject.shiptypes;
     var outputper = parseInt(sendObject.outputPer);
@@ -58,7 +58,7 @@ router.post('/navyamount', function (req, res, next) {
 });
 
 router.post('/divisionamount', function (req, res, next) {
-    req.visitor.event("Calculator", "ArmyFromDivisionAmount");
+    req.visitor.event("Calculator", "ArmyFromDivisionAmount").send();
     var sendObject = req.body;
     var checkedData = checkDivisionInput(sendObject, res);
     if(checkedData.error){
@@ -75,7 +75,7 @@ router.post('/divisionamount', function (req, res, next) {
 });
 
 router.post('/divisionfactories', function (req, res, next) {
-    req.visitor.event("Calculator", "ArmyFromFactoryAmount");
+    req.visitor.event("Calculator", "ArmyFromFactoryAmount").send();
     var sendObject = req.body;
     var checkedData = checkDivisionInput(sendObject, res);
     if(checkedData.error){
