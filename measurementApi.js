@@ -1,6 +1,18 @@
 var request = require('request');
+var unwantedUserAgents = require("./data/unwantedUserAgents.json");
 
 module.exports=function (cid, ip, useragent, referer) {
+    //if unwanted UserAgent - return blank object
+    if(unwantedUserAgents.indexOf(useragent)!=-1){
+        return {
+            pageView:function (page) {
+
+            },
+            event:function (category, action) {
+
+            }
+        }
+    }
     // Set the headers
     var headers = {
         'User-Agent':       'FactoryCalc',

@@ -27,17 +27,30 @@ router.post('/airforceamount', function (req, res, next) {
             };
         }
     }
+    var requiredResourcesTotal={};
+    var totalFactoriesRequired = 0;
     var factoriesPerPlane=[]
     for(var planetype in condesedPlaneTypes) {
         if (condesedPlaneTypes.hasOwnProperty(planetype)) {
-                factorieObject = {
-                    amount: Math.ceil((planeCost[planetype]*condesedPlaneTypes[planetype].amount)/(baseProduction*(getAveragePE(productionEfficiency, productionEfficiencyCap, outputper)/100)*(factoryEfficieny/100)*outputper)),
-                    name:condesedPlaneTypes[planetype].name
+            var factorieObject = {
+                amount: Math.ceil((planeCost[planetype].cost*condesedPlaneTypes[planetype].amount)/(baseProduction*(getAveragePE(productionEfficiency, productionEfficiencyCap, outputper)/100)*(factoryEfficieny/100)*outputper)),
+                name:condesedPlaneTypes[planetype].name
+            };
+            totalFactoriesRequired = totalFactoriesRequired + factorieObject.amount;
+            factorieObject.requiredResources = {};
+            for(var resource of planeCost[planetype].res) {
+                factorieObject.requiredResources[resource.name] = resource.amount*Math.ceil(factorieObject.amount);
+                if(requiredResourcesTotal[resource.name]){
+                    requiredResourcesTotal[resource.name] = requiredResourcesTotal[resource.name] + resource.amount*Math.ceil(factorieObject.amount);
                 }
+                else {
+                    requiredResourcesTotal[resource.name] = resource.amount*Math.ceil(factorieObject.amount);
+                }
+            }
                 factoriesPerPlane.push(factorieObject);
         }
     }
-    res.status(200).send(factoriesPerPlane);
+    res.status(200).send({factoriesPerPlane:factoriesPerPlane,totalFactories:totalFactoriesRequired,requiredResourcesTotal:requiredResourcesTotal});
 });
 
 router.post('/navyamount', function (req, res, next) {

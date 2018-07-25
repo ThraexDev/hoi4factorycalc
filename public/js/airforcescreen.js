@@ -29,20 +29,35 @@ function sendCalcRequest() {
                     "<tr>"+
                     "<th>Equipment Type</th>"+
                     "<th>Number of Factories to assign</th>"+
+                    "<th>Resources used for Plane Type</th>"+
                     "</tr>"+
                     "</thead>"+
                     "                <tbody>\n";
-                if(Array.isArray(data)){
-                    for(factory of data){
+                if(Array.isArray(data.factoriesPerPlane)){
+                    for(var factory of data.factoriesPerPlane){
+                        var eqRes = "";
+                        for(var res in factory.requiredResources){
+                            if (factory.requiredResources.hasOwnProperty(res)){
+                                eqRes = eqRes.concat(factory.requiredResources[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                            }
+                        }
                         var insertData = "                <tr>\n" +
                             "                    <td>"+factory.name+"</td>\n" +
                             "                    <td>"+factory.amount+"</td>\n" +
+                            "                    <td>"+eqRes+"</td>\n" +
                             "                </tr>\n";
                         resultTable = resultTable.concat(insertData);
                     }
                 }
                 resultTable = resultTable.concat("                </tbody>\n" +
                     "            </table>");
+                resultTable = resultTable.concat("Total amount of Factories needed: "+data.totalFactories+"</br>\n"+
+                    "Total amount of resources needed: ");
+                for(var res in data.requiredResourcesTotal){
+                    if (data.requiredResourcesTotal.hasOwnProperty(res)){
+                        resultTable = resultTable.concat(data.requiredResourcesTotal[res]+" <img src=\"pictures/"+res+".png\" alt=\""+res+"\"> "+res+"</br>")
+                    }
+                }
                 document.getElementById('result').innerHTML = resultTable;
                 window.scrollTo(0,document.body.scrollHeight);
             }
